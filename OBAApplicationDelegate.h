@@ -17,7 +17,7 @@
 #import "OBANavigationTarget.h"
 #import "GAI.h"
 #import "OBAApplication.h"
-@import WatchConnectivity;
+#import <WatchConnectivity/WatchConnectivity.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

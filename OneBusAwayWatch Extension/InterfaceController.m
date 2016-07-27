@@ -40,7 +40,7 @@
 //                                      @"statusText":nextDeparture.statusText,
 //                                      @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture)};
     
-    NSLog(@"THIS IS THE LOG OF THE ENTIRE MESSAGE: \n%@", message);
+    NSLog(@"Contents of connectivity message: \n%@", message);
     NSInteger index = self.table.numberOfRows;
     [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"TestRow"];
     OBARowController *controller = [self.table rowControllerAtIndex:index];
