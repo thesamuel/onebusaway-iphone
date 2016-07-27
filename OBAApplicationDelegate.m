@@ -36,6 +36,9 @@
 #import "NSArray+OBAAdditions.h"
 #import <Apptentive/Apptentive.h>
 
+#import "OBABookmarkGroup.h"
+#import "OBAArrivalAndDepartureV2.h"
+
 static NSString *kOBASelectedTabIndexDefaultsKey = @"OBASelectedTabIndexDefaultsKey";
 static NSString *kOBAShowExperimentalRegionsDefaultsKey = @"kOBAShowExperimentalRegionsDefaultsKey";
 static NSString *const kTrackingId = @"UA-2423527-17";
@@ -55,6 +58,50 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
 @end
 
 @implementation OBAApplicationDelegate
+
+- (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
+    OBAModelDAO *modelDAO = [OBAApplication sharedApplication].modelDao;
+    NSMutableArray *allBookmarks = [NSMutableArray new];
+    [allBookmarks addObjectsFromArray:modelDAO.ungroupedBookmarks];
+    for (OBABookmarkGroup *group in modelDAO.bookmarkGroups) {
+        [allBookmarks addObjectsFromArray:group.bookmarks];
+    }
+    
+    for (OBABookmarkV2 *bookmark in allBookmarks) {
+        [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId minutesBefore:0 minutesAfter:35].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
+            NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
+            OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
+            if (nextDeparture){
+                NSDictionary *replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
+                                                  @"departureStatus":@(nextDeparture.departureStatus),
+                                                  @"statusText":nextDeparture.statusText,
+                                                  @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture)};
+                [self sendMessage:replyDictionary];
+            } else {
+                NSDictionary *replyDictionary = @{@"bestAvailableName":bookmark.name};
+                [self sendMessage:replyDictionary];
+            }
+        }).catch(^(NSError *error) {
+            NSLog(@"Failed to load departure for bookmark: %@", error);
+        });
+    }
+}
+
+- (void)sendMessage:(NSDictionary *)message {
+    if ([[WCSession defaultSession] isReachable]) {
+        [[WCSession defaultSession] sendMessage:message replyHandler:nil errorHandler:nil];
+    } else {
+        //watch isnt there
+    }
+}
+
+- (void)setupWatchConnectivity {
+    if ([WCSession isSupported]) {
+        WCSession* session = [WCSession defaultSession];
+        session.delegate = self;
+        [session activateSession];
+    }
+}
 
 - (id)init {
     self = [super init];
@@ -200,6 +247,8 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
     [OBAAnalytics configureVoiceOverStatus];
 
     [self _constructUI];
+    
+    [self setupWatchConnectivity];
 
     return YES;
 }
