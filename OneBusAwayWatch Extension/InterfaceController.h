@@ -8,7 +8,9 @@
 
 #import <WatchKit/WatchKit.h>
 #import <Foundation/Foundation.h>
+#import "OBARowController.h"
 
 @interface InterfaceController : WKInterfaceController
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *table;
 
 @end
