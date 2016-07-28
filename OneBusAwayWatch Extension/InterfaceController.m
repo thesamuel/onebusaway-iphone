@@ -35,16 +35,66 @@
 }
 
 - (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
-//    NSDictionary *replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
-//                                      @"departureStatus":@(nextDeparture.departureStatus),
-//                                      @"statusText":nextDeparture.statusText,
-//                                      @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture)};
+//    replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
+//                        @"departureStatus":@(nextDeparture.departureStatus),
+//                        @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
+//                        @"stopName":bookmark.stop.name,
+//                        @"stopDirection":bookmark.stop.direction,
+//                        @"name":bookmark.name,
+//                        @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)};
+    
+//    OBADepartureStatusUnknown = 0,
+//    OBADepartureStatusEarly,
+//    OBADepartureStatusOnTime,
+//    OBADepartureStatusDelayed
     
     NSLog(@"Contents of connectivity message: \n%@", message);
     NSInteger index = self.table.numberOfRows;
     [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"TestRow"];
     OBARowController *controller = [self.table rowControllerAtIndex:index];
-    [controller.label setText:[message objectForKey:@"bestAvailableName"]];
+    if ([message objectForKey:@"bestAvailableName"]) {
+        NSArray *labelArray = @[[message objectForKey:@"bestAvailableName"], //0
+                                [message objectForKey:@"departureStatus"], //1
+                                [message objectForKey:@"minutesUntilBestDeparture"], //2
+                                [message objectForKey:@"stopName"], //3
+                                [message objectForKey:@"stopDirection"], //4
+                                [message objectForKey:@"name"], //5
+                                [message objectForKey:@"deviationFromSchedule"]]; //6
+        
+        NSString *departureStatus;
+        int test = [[message objectForKey:@"departureStatus"] intValue];
+        switch (test) {
+            case 0:
+                departureStatus = @"Unknown Departure";
+                break;
+            case 1:
+                departureStatus = @"Early Departure";
+                break;
+            case 2:
+                departureStatus = @"On Time Departure";
+                break;
+            case 3:
+                departureStatus = @"Delayed Departure";
+                break;
+            default:
+                departureStatus = @"Problem loading departure";
+                break;
+        }
+        
+        NSString *labelString = [NSString stringWithFormat:@"%@ %@ %@ %@ %@ %@ %@",
+                                 labelArray[0],
+                                 departureStatus,
+                                 labelArray[2],
+                                 labelArray[3],
+                                 labelArray[4],
+                                 labelArray[5],
+                                 labelArray[6]
+                                 ];
+        
+        [controller.label setText:labelString];
+    } else if (message) {
+        [controller.label setText:[message objectForKey:@"name"]];
+    }
 }
 
 - (void)willActivate {

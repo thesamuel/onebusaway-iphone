@@ -406,16 +406,19 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
         [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId minutesBefore:0 minutesAfter:35].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
             NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
             OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
+            NSDictionary *replyDictionary;
             if (nextDeparture){
-                NSDictionary *replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
-                                                  @"departureStatus":@(nextDeparture.departureStatus),
-                                                  @"statusText":nextDeparture.statusText,
-                                                  @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture)};
-                [self sendMessage:replyDictionary];
+                replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
+                                    @"departureStatus":@(nextDeparture.departureStatus),
+                                    @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
+                                    @"stopName":bookmark.stop.name,
+                                    @"stopDirection":bookmark.stop.direction,
+                                    @"name":bookmark.name,
+                                    @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)};
             } else {
-                NSDictionary *replyDictionary = @{@"bestAvailableName":bookmark.name};
-                [self sendMessage:replyDictionary];
+                replyDictionary = @{@"name":bookmark.name};
             }
+            [self sendMessage:replyDictionary];
         }).catch(^(NSError *error) {
             NSLog(@"Failed to load departure for bookmark: %@", error);
         });
