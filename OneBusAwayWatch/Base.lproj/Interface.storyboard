@@ -13,16 +13,25 @@
                         <table alignment="left" id="rES-Pz-ffn">
                             <items>
                                 <tableRow identifier="StopRow" id="9Gd-da-Lpy" customClass="OBARowController">
-                                    <group key="rootItem" width="1" alignment="left" id="4a1-Ka-DYj">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" id="4a1-Ka-DYj">
                                         <items>
-                                            <label width="0.20000000000000001" height="1" alignment="left" text="999" minimumScaleFactor="0.69999999999999996" id="2IP-L2-YNG">
+                                            <label width="0.20000000000000001" height="1" alignment="left" text="49" textAlignment="center" minimumScaleFactor="0.69999999999999996" id="2IP-L2-YNG">
                                                 <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
                                             </label>
-                                            <separator alignment="left" id="6Iz-Yi-U6s"/>
-                                            <group width="0.59999999999999998" height="1" alignment="left" layout="vertical" id="u98-Xr-k37">
+                                            <group width="0.80000000000000004" alignment="left" id="90b-mv-o9m">
                                                 <items>
-                                                    <label height="17" alignment="left" text="stop" id="QsU-vd-oEv"/>
-                                                    <label height="0.5" alignment="left" verticalAlignment="bottom" text="status" id="BF3-VY-qvc"/>
+                                                    <separator height="1" alignment="left" id="6Iz-Yi-U6s"/>
+                                                    <group alignment="left" layout="vertical" id="u98-Xr-k37">
+                                                        <items>
+                                                            <label alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="QsU-vd-oEv">
+                                                                <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
+                                                            </label>
+                                                            <label alignment="left" verticalAlignment="bottom" text="15 minutes" id="BF3-VY-qvc">
+                                                                <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                                            </label>
+                                                        </items>
+                                                    </group>
                                                 </items>
                                             </group>
                                         </items>

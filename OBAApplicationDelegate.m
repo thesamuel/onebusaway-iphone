@@ -403,7 +403,7 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
     }
     
     for (OBABookmarkV2 *bookmark in allBookmarks) {
-        [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId minutesBefore:0 minutesAfter:35].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
+        [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId minutesBefore:0 minutesAfter:120].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
             NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
             OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
             NSDictionary *replyDictionary;

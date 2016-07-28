@@ -67,7 +67,7 @@
     } else if (message) {
         [controller.route setText:@"--"];
         [controller.stop setText:[message objectForKey:@"name"]];
-        [controller.status setText:@"no upcoming transit"];
+        [controller.status setText:@"none upcoming"];
     }
 }
 
