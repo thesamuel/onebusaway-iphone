@@ -8,16 +8,30 @@
 
 #import "InterfaceController.h"
 
-@interface InterfaceController()
+@interface InterfaceController(){
+    
+}
 
 @end
-
 
 @implementation InterfaceController
 
 - (void)awakeWithContext:(id)context {
     [super awakeWithContext:context];
+    
+    [self refresh];
+}
 
+- (IBAction)refreshPressed {
+    if ([self.table numberOfRows] > 1){
+        NSRange rowRange = NSMakeRange(0, ([self.table numberOfRows]));
+        NSIndexSet *rowIndexSet = [NSIndexSet indexSetWithIndexesInRange:rowRange];
+        [self.table removeRowsAtIndexes:rowIndexSet];
+    }
+    [self refresh];
+}
+
+- (void)refresh {
     if ([WCSession isSupported]) {
         WCSession* session = [WCSession defaultSession];
         session.delegate = self;
@@ -34,6 +48,7 @@
     }
 }
 
+//confirm using KEY
 // message dictionary: bestAvailableName, departureStatus, minutesUntilBestDeparture, name, deviationFromSchedule
 - (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
     NSLog(@"Contents of connectivity message: \n%@", message);
@@ -59,7 +74,7 @@
         
         [controller.route setText:[message objectForKey:@"bestAvailableName"]];
         [controller.stop setText:[message objectForKey:@"name"]];
-        NSString *departureString = [NSString stringWithFormat:@"%@ minutes", [message objectForKey:@"minutesUntilBestDeparture"]];
+        NSString *departureString = [NSString stringWithFormat:@"in %@ minutes", [message objectForKey:@"minutesUntilBestDeparture"]];
         [controller.status setText:departureString];
         if (departureStatusColor) {
             [controller.route setTextColor:departureStatusColor];
@@ -82,6 +97,3 @@
 }
 
 @end
-
-
-

@@ -10,6 +10,11 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController">
                     <items>
+                        <button width="1" alignment="left" title="Refresh" id="q5d-0C-oEP">
+                            <connections>
+                                <action selector="refreshPressed" destination="AgC-eL-Hgc" id="xTP-zY-QYS"/>
+                            </connections>
+                        </button>
                         <table alignment="left" id="rES-Pz-ffn">
                             <items>
                                 <tableRow identifier="StopRow" id="9Gd-da-Lpy" customClass="OBARowController">
