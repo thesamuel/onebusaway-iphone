@@ -11,7 +11,8 @@
 
 @interface OBARowController : NSObject
 
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *label;
-@property (strong, nonatomic) NSString *text;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *route;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *stop;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *status;
 
 @end

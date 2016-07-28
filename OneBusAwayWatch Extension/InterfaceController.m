@@ -30,70 +30,44 @@
                                    replyHandler:nil
                                    errorHandler:nil];
     } else {
-        //phone isnt there
+        //phone unreachable
     }
 }
 
+// message dictionary: bestAvailableName, departureStatus, minutesUntilBestDeparture, name, deviationFromSchedule
 - (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
-//    replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
-//                        @"departureStatus":@(nextDeparture.departureStatus),
-//                        @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
-//                        @"stopName":bookmark.stop.name,
-//                        @"stopDirection":bookmark.stop.direction,
-//                        @"name":bookmark.name,
-//                        @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)};
-    
-//    OBADepartureStatusUnknown = 0,
-//    OBADepartureStatusEarly,
-//    OBADepartureStatusOnTime,
-//    OBADepartureStatusDelayed
-    
     NSLog(@"Contents of connectivity message: \n%@", message);
     NSInteger index = self.table.numberOfRows;
-    [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"TestRow"];
+    [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
     OBARowController *controller = [self.table rowControllerAtIndex:index];
     if ([message objectForKey:@"bestAvailableName"]) {
-        NSArray *labelArray = @[[message objectForKey:@"bestAvailableName"], //0
-                                [message objectForKey:@"departureStatus"], //1
-                                [message objectForKey:@"minutesUntilBestDeparture"], //2
-                                [message objectForKey:@"stopName"], //3
-                                [message objectForKey:@"stopDirection"], //4
-                                [message objectForKey:@"name"], //5
-                                [message objectForKey:@"deviationFromSchedule"]]; //6
         
-        NSString *departureStatus;
-        int test = [[message objectForKey:@"departureStatus"] intValue];
-        switch (test) {
-            case 0:
-                departureStatus = @"Unknown Departure";
+        UIColor *departureStatusColor;
+        switch ([[message objectForKey:@"departureStatus"] intValue]) {
+            case 1: // early
+                departureStatusColor = [UIColor greenColor];
                 break;
-            case 1:
-                departureStatus = @"Early Departure";
+            case 2: // on time
+                departureStatusColor = [UIColor whiteColor];
                 break;
-            case 2:
-                departureStatus = @"On Time Departure";
-                break;
-            case 3:
-                departureStatus = @"Delayed Departure";
+            case 3: // delayed
+                departureStatusColor = [UIColor blueColor];
                 break;
             default:
-                departureStatus = @"Problem loading departure";
                 break;
         }
         
-        NSString *labelString = [NSString stringWithFormat:@"%@ %@ %@ %@ %@ %@ %@",
-                                 labelArray[0],
-                                 departureStatus,
-                                 labelArray[2],
-                                 labelArray[3],
-                                 labelArray[4],
-                                 labelArray[5],
-                                 labelArray[6]
-                                 ];
-        
-        [controller.label setText:labelString];
+        [controller.route setText:[message objectForKey:@"bestAvailableName"]];
+        [controller.stop setText:[message objectForKey:@"name"]];
+        NSString *departureString = [NSString stringWithFormat:@"%@ minutes", [message objectForKey:@"minutesUntilBestDeparture"]];
+        [controller.status setText:departureString];
+        if (departureStatusColor) {
+            [controller.route setTextColor:departureStatusColor];
+        }
     } else if (message) {
-        [controller.label setText:[message objectForKey:@"name"]];
+        [controller.route setText:@"--"];
+        [controller.stop setText:[message objectForKey:@"name"]];
+        [controller.status setText:@"no upcoming transit"];
     }
 }
 

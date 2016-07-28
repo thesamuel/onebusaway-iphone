@@ -10,8 +10,4 @@
 
 @implementation OBARowController
 
-- (void)setText:(NSString *)text {
-    [self.label setText:text];
-}
-
 @end
