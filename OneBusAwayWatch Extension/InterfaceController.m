@@ -56,7 +56,6 @@
     [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
     OBARowController *controller = [self.table rowControllerAtIndex:index];
     if ([message objectForKey:@"bestAvailableName"]) {
-        
         UIColor *departureStatusColor;
         switch ([[message objectForKey:@"departureStatus"] intValue]) {
             case 1: // early
@@ -71,7 +70,6 @@
             default:
                 break;
         }
-        
         [controller.route setText:[message objectForKey:@"bestAvailableName"]];
         [controller.stop setText:[message objectForKey:@"name"]];
         NSString *departureString = [NSString stringWithFormat:@"in %@ minutes", [message objectForKey:@"minutesUntilBestDeparture"]];

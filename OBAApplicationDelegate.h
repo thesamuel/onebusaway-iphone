@@ -17,7 +17,6 @@
 #import "OBANavigationTarget.h"
 #import "GAI.h"
 #import "OBAApplication.h"
-#import <WatchConnectivity/WatchConnectivity.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class OBAInfoViewController;
 @class OBARegionListViewController;
 
-@interface OBAApplicationDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate, WCSessionDelegate> {
+@interface OBAApplicationDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate> {
     
     UINavigationController *_regionNavigationController;
     OBARegionListViewController *_regionListViewController;

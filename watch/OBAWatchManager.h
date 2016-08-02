@@ -1,14 +1,12 @@
 //
-//  InterfaceController.h
-//  OneBusAwayWatch Extension
+//  OBAWatchManager.h
+//  org.onebusaway.iphone
 //
-//  Created by Sam Gehman on 7/26/16.
+//  Created by Sam Gehman on 8/1/16.
 //  Copyright © 2016 OneBusAway. All rights reserved.
 //
 
-#import <WatchKit/WatchKit.h>
 #import <Foundation/Foundation.h>
-#import "OBARowController.h"
 @import WatchConnectivity;
 
 // TODO: sam - declare a common class for these with watch app
@@ -18,8 +16,6 @@ typedef NS_ENUM(NSInteger, OBAWatchRequestType) {
     OBAWatchRequestTypeCurrentMap,
 };
 
-@interface InterfaceController : WKInterfaceController<WCSessionDelegate>
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *table;
-- (IBAction)refreshPressed;
+@interface OBAWatchManager : NSObject <WCSessionDelegate>
 
 @end

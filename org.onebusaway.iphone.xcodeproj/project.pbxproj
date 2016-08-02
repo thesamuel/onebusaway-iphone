@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		31040260B414257944BD0C2D /* Pods_OneBusAway.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73CB0AC7A68F6DE563855845 /* Pods_OneBusAway.framework */; };
+		61CE2B601D5059FD00CDEC24 /* OBAWatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */; };
 		61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9051D485ADD0029D18F /* Interface.storyboard */; };
 		61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9081D485ADD0029D18F /* Assets.xcassets */; };
 		61D1F9101D485ADE0029D18F /* OneBusAwayWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 61D1F90F1D485ADE0029D18F /* OneBusAwayWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -407,6 +408,8 @@
 		2B80B704E740E0E6BB8699E7 /* Pods-OneBusAwayTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneBusAwayTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OneBusAwayTests/Pods-OneBusAwayTests.release.xcconfig"; sourceTree = "<group>"; };
 		4F8EB54B20802AD353BBD9F0 /* Pods-OneBusAway.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneBusAway.release.xcconfig"; path = "Pods/Target Support Files/Pods-OneBusAway/Pods-OneBusAway.release.xcconfig"; sourceTree = "<group>"; };
 		5915BB5B4ED79BCFF0C6D8B4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		61CE2B5E1D5059FD00CDEC24 /* OBAWatchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAWatchManager.h; sourceTree = "<group>"; };
+		61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAWatchManager.m; sourceTree = "<group>"; };
 		61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneBusAwayWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61D1F9061D485ADD0029D18F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		61D1F9081D485ADD0029D18F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -918,6 +921,7 @@
 				93AD36A7160402FA00BDF03F /* protocols */,
 				93AD36371603FE4600BDF03F /* controls */,
 				669B2F711AEBF92E00CF2367 /* utilities */,
+				61CE2B5D1D5059DE00CDEC24 /* watch */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				936F45DA1C78D06600C61656 /* OneBusAwayTests */,
@@ -968,6 +972,15 @@
 				FEDB575BE5B5DDBA090E58E0 /* Pods_OneBusAwayTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		61CE2B5D1D5059DE00CDEC24 /* watch */ = {
+			isa = PBXGroup;
+			children = (
+				61CE2B5E1D5059FD00CDEC24 /* OBAWatchManager.h */,
+				61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */,
+			);
+			path = watch;
 			sourceTree = "<group>";
 		};
 		61D1F9041D485ADD0029D18F /* OneBusAwayWatch */ = {
@@ -2285,6 +2298,7 @@
 				932BE4BE1AB66D5C0011F2FB /* OBAReportProblemWithRecentTripsViewController.m in Sources */,
 				932BE4D91AB66D890011F2FB /* OBADiversionViewController.m in Sources */,
 				932BE4F61AB66E990011F2FB /* OBASearchController.m in Sources */,
+				61CE2B601D5059FD00CDEC24 /* OBAWatchManager.m in Sources */,
 				934446D01AB12B29005B3333 /* OBATextEditViewController.m in Sources */,
 				9320764C1C915441005F7D4A /* OBABookmarksViewController.m in Sources */,
 				93F05A631C8E080000BF36B1 /* OBAAnimation.m in Sources */,
@@ -3494,6 +3508,7 @@
 				61D1F9241D485ADE0029D18F /* AdHocDistribution */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		61D1F9261D485ADE0029D18F /* Build configuration list for PBXNativeTarget "OneBusAwayWatch" */ = {
 			isa = XCConfigurationList;
@@ -3504,6 +3519,7 @@
 				61D1F92A1D485ADE0029D18F /* AdHocDistribution */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		936F45141C780E7700C61656 /* Build configuration list for PBXNativeTarget "OBAKit" */ = {
 			isa = XCConfigurationList;

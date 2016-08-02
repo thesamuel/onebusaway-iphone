@@ -163,7 +163,7 @@
             return [_modelService requestStopsForRegion:region
                                         completionBlock:^(id jsonData, NSUInteger responseCode, NSError *error) {
                                             WrapperCompletion(jsonData, responseCode, error, ^(id data) {
-                                            [self fireUpdateFromList:jsonData];
+                                            [self fireUpdateFromList:jsonData]; // TODO: modify this method to use the list to instead of firing an update, to send data to the apple watch
                                             });
                                         }];
         }

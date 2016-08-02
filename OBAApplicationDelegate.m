@@ -39,6 +39,8 @@
 #import "OBABookmarkGroup.h"
 #import "OBAArrivalAndDepartureV2.h"
 
+#import "OBAWatchManager.h"
+
 static NSString *kOBASelectedTabIndexDefaultsKey = @"OBASelectedTabIndexDefaultsKey";
 static NSString *kOBAShowExperimentalRegionsDefaultsKey = @"kOBAShowExperimentalRegionsDefaultsKey";
 static NSString *const kTrackingId = @"UA-2423527-17";
@@ -55,6 +57,7 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
 @property (nonatomic, strong) id regionObserver;
 @property (nonatomic, strong) id recentStopsObserver;
 @property(nonatomic,strong) ABReleaseNotesViewController *releaseNotes;
+@property (nonatomic, strong) OBAWatchManager *watchManager;
 @end
 
 @implementation OBAApplicationDelegate
@@ -203,8 +206,8 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
     [OBAAnalytics configureVoiceOverStatus];
 
     [self _constructUI];
-    
-    [self setupWatchConnectivity];
+
+    self.watchManager = [OBAWatchManager new];
 
     return YES;
 }
@@ -390,55 +393,6 @@ static NSString *const kApptentiveKey = @"3363af9a6661c98dec30fedea451a06dd7d7bc
     _regionNavigationController = [[UINavigationController alloc] initWithRootViewController:_regionListViewController];
 
     self.window.rootViewController = _regionNavigationController;
-}
-
-#pragma mark - WatchConnectivity Methods
-
-- (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
-    OBAModelDAO *modelDAO = [OBAApplication sharedApplication].modelDao;
-    NSMutableArray *allBookmarks = [NSMutableArray new];
-    [allBookmarks addObjectsFromArray:modelDAO.ungroupedBookmarks];
-    for (OBABookmarkGroup *group in modelDAO.bookmarkGroups) {
-        [allBookmarks addObjectsFromArray:group.bookmarks];
-    }
-    
-    for (OBABookmarkV2 *bookmark in allBookmarks) {
-        [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId minutesBefore:0 minutesAfter:120].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
-            NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
-            OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
-            NSDictionary *replyDictionary;
-            if (nextDeparture){
-                replyDictionary = @{@"bestAvailableName":nextDeparture.bestAvailableName,
-                                    @"departureStatus":@(nextDeparture.departureStatus),
-                                    @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
-                                    @"stopName":bookmark.stop.name,
-                                    @"stopDirection":bookmark.stop.direction,
-                                    @"name":bookmark.name,
-                                    @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)};
-            } else {
-                replyDictionary = @{@"name":bookmark.name};
-            }
-            [self sendMessage:replyDictionary];
-        }).catch(^(NSError *error) {
-            NSLog(@"Failed to load departure for bookmark: %@", error);
-        });
-    }
-}
-
-- (void)sendMessage:(NSDictionary *)message {
-    if ([[WCSession defaultSession] isReachable]) {
-        [[WCSession defaultSession] sendMessage:message replyHandler:nil errorHandler:nil];
-    } else {
-        //watch isnt there
-    }
-}
-
-- (void)setupWatchConnectivity {
-    if ([WCSession isSupported]) {
-        WCSession* session = [WCSession defaultSession];
-        session.delegate = self;
-        [session activateSession];
-    }
 }
 
 @end
