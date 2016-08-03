@@ -39,18 +39,33 @@
     }
     
     if ([[WCSession defaultSession] isReachable]) {
-        NSDictionary *applicationDict = @{@"launched": @"true"};
-        [[WCSession defaultSession] sendMessage:applicationDict
-                                   replyHandler:nil
-                                   errorHandler:nil];
+        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+        [[WCSession defaultSession] sendMessage:request
+                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                       [self updateNearbyWithMessage:replyMessage];
+                                   }
+                                   errorHandler:^(NSError *error) {
+                                       // do something
+                                   }
+         ];
     } else {
         //phone unreachable
     }
 }
 
-//confirm using KEY
-// message dictionary: bestAvailableName, departureStatus, minutesUntilBestDeparture, name, deviationFromSchedule
-- (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
+- (void)updateNearbyWithMessage:(NSDictionary *)message {
+    NSArray *nearbyArray = [message objectForKey:@"response"];
+    for (NSDictionary *nearbyStop in nearbyArray) {
+        NSInteger index = self.table.numberOfRows;
+        [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
+        OBARowController *controller = [self.table rowControllerAtIndex:index];
+        [controller.route setText:[nearbyStop objectForKey:@"---"]];
+        [controller.stop setText:[nearbyStop objectForKey:@"name"]];
+        [controller.status setText:@"n/a"];
+    }
+}
+
+- (void)updateBookmarksWithMessage:(NSDictionary *)message {
     NSLog(@"Contents of connectivity message: \n%@", message);
     NSInteger index = self.table.numberOfRows;
     [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];

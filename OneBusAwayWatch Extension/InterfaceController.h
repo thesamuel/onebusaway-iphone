@@ -18,6 +18,12 @@ typedef NS_ENUM(NSInteger, OBAWatchRequestType) {
     OBAWatchRequestTypeCurrentMap,
 };
 
+typedef NS_ENUM(NSInteger, OBAWatchResponseType) {
+    OBAWatchResponseTypeNearby,
+    OBAWatchResponseTypeBookmarks,
+    OBAWatchResponseTypeCurrentMap,
+};
+
 @interface InterfaceController : WKInterfaceController<WCSessionDelegate>
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *table;
 - (IBAction)refreshPressed;

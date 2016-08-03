@@ -11,6 +11,7 @@
 #import "OBASearchController.h"
 
 static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
+static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
 
 @interface OBAWatchManager () {
     MKCoordinateRegion region;
@@ -28,6 +29,7 @@ static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
     if (self) {
         _modelService = [OBAApplication sharedApplication].modelService;
         [self setupWatchConnectivity];
+        [self refreshCurrentRegion];
     }
     return self;
 }
@@ -40,22 +42,18 @@ static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
     }
 }
 
-- (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message {
-    OBAWatchRequestType requestType = [[message objectForKey:@"requestType"] integerValue];
+- (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *, id> *)message
+   replyHandler:(void(^)(NSDictionary<NSString *, id> *replyMessage))replyHandler {
+    OBAWatchRequestType requestType = [[message objectForKey:@"request_type"] integerValue];
     if (requestType == OBAWatchRequestTypeNearby) {
-        [self refreshNearbyStops];
+        //[self nearbyStops]
+        NSDictionary *messageDictionary = @{@"response":[self nearbyStops],
+                                            @"response_type":@(OBAWatchResponseTypeNearby)};
+        replyHandler(messageDictionary);
     } else if (requestType == OBAWatchRequestTypeBookmarks) {
-
-    }
-}
-
-- (void)sendMessage:(NSDictionary *)message {
-    if (message) {
-        if ([[WCSession defaultSession] isReachable]) {
-            [[WCSession defaultSession] sendMessage:message replyHandler:nil errorHandler:nil];
-        } else {
-            //watch isnt there
-        }
+        NSDictionary *messageDictionary = @{@"response":[self bookmarks],
+                                            @"response_type":@(OBAWatchResponseTypeBookmarks)};
+        replyHandler(messageDictionary);
     }
 }
 
@@ -66,35 +64,43 @@ static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
     CLLocation *location = lm.currentLocation;
 
     if (location) {
-        double radius = MAX(location.horizontalAccuracy, OBAMinMapRadiusInMeters);
-        region = [OBASphericalGeometryLibrary createRegionWithCenter:location.coordinate latRadius:radius lonRadius:radius];
+        //double radius = MAX(location.horizontalAccuracy, OBAMinMapRadiusInMeters);
+        region = [OBASphericalGeometryLibrary createRegionWithCenter:location.coordinate
+                                                           latRadius:kOBANearbyRadiusInMeters
+                                                           lonRadius:kOBANearbyRadiusInMeters];
     }
 }
 
-- (void)refreshNearbyStops {
+- (NSArray *)nearbyStops {
     [self refreshCurrentRegion];
+    __block NSArray *stops;
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     _request = [_modelService requestStopsForRegion:region completionBlock:^(id jsonData, NSUInteger responseCode, NSError *error) {
         //TODO: get this wrapper to work! (error codes)
         //WrapperCompletion(jsonData, responseCode, error, ^(id data) {
-        [self sendNearbyStops:jsonData];
+        stops = [self arrayOfNearbyStopsWithJson:jsonData];
+        dispatch_semaphore_signal(semaphore);
     }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return stops;
 }
 
-- (void)sendNearbyStops:(OBAListWithRangeAndReferencesV2 *)list {
+- (NSArray *)arrayOfNearbyStopsWithJson:(OBAListWithRangeAndReferencesV2 *)list {
     //OBASearchResult *result = [OBASearchResult resultFromList:list];
-    NSMutableDictionary *stopDictionary = [NSMutableDictionary new];
+    NSMutableArray *stopsArray = [NSMutableArray new];
     for (OBAStopV2 *stop in list.values) {
-        [stopDictionary setObject:stop.name forKey:@"stopName"];
-        [stopDictionary setObject:stop.code forKey:@"stopId"];
-        [stopDictionary setObject:stop.direction forKey:@"stopDirection"];
-        [stopDictionary setObject:[NSString stringWithFormat:@"%@ [%@]", stop.name, stop.direction] forKey:@"name"];
-        [self sendMessage:stopDictionary];
+        NSDictionary *stopDictionary = @{@"stopName":stop.name,
+                                       @"stopId":stop.code,
+                                       @"stopDirection":stop.direction,
+                                       @"name":[NSString stringWithFormat:@"%@ [%@]", stop.name, stop.direction]};
+        [stopsArray addObject:stopDictionary];
     }
+    return stopsArray;
 }
 
 #pragma mark - Bookmark Methods
 
-- (void)refreshBookmarks {
+- (NSArray *)bookmarks {
     OBAModelDAO *modelDAO = [OBAApplication sharedApplication].modelDao;
     NSMutableArray *allBookmarks = [NSMutableArray new];
     [allBookmarks addObjectsFromArray:modelDAO.ungroupedBookmarks];
@@ -102,26 +108,35 @@ static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
         [allBookmarks addObjectsFromArray:group.bookmarks];
     }
 
+    __block NSMutableArray* bookmarkArray;
     for (OBABookmarkV2 *bookmark in allBookmarks) {
         [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId
                                                             minutesBefore:0
                                                              minutesAfter:kOBAWatchBookmarkMinutesAfter].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
             NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
             OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
-            NSDictionary *replyDictionary = (nextDeparture) ?
-            @{@"bestAvailableName":nextDeparture.bestAvailableName,
-              @"departureStatus":@(nextDeparture.departureStatus),
-              @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
-              @"stopName":bookmark.stop.name,
-              @"stopDirection":bookmark.stop.direction,
-              @"name":bookmark.name,
-              @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)}
-            : @{@"name":bookmark.name};
-            [self sendMessage:replyDictionary];
+            [bookmarkArray addObject:[self createDictionaryForBookmark:bookmark withArrivalAndDeparture:nextDeparture]];
         }).catch(^(NSError *error) {
             NSLog(@"Failed to load departure for bookmark: %@", error);
         });
     }
+    return bookmarkArray;
+}
+
+- (NSDictionary *)createDictionaryForBookmark:(OBABookmarkV2 *)bookmark withArrivalAndDeparture:(OBAArrivalAndDepartureV2 *)nextDeparture {
+    NSDictionary *replyDictionary;
+    if (nextDeparture) {
+        replyDictionary = @{@"stopDirection":bookmark.stop.direction,
+                            @"name":bookmark.name,
+                            @"stopName":bookmark.stop.name,
+                            @"bestAvailableName":nextDeparture.bestAvailableName,
+                            @"departureStatus":@(nextDeparture.departureStatus),
+                            @"minutesUntilBestDeparture":@(nextDeparture.minutesUntilBestDeparture),
+                            @"deviationFromSchedule":@(nextDeparture.predictedDepatureTimeDeviationFromScheduleInMinutes)};
+    } else {
+        replyDictionary = @{@"name":bookmark.name};
+    }
+    return replyDictionary;
 }
 
 @end

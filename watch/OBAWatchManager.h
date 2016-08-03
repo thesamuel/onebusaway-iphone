@@ -16,6 +16,12 @@ typedef NS_ENUM(NSInteger, OBAWatchRequestType) {
     OBAWatchRequestTypeCurrentMap,
 };
 
+typedef NS_ENUM(NSInteger, OBAWatchResponseType) {
+    OBAWatchResponseTypeNearby,
+    OBAWatchResponseTypeBookmarks,
+    OBAWatchResponseTypeCurrentMap,
+};
+
 @interface OBAWatchManager : NSObject <WCSessionDelegate>
 
 @end
