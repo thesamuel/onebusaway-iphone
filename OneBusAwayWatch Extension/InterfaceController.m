@@ -8,11 +8,25 @@
 
 #import "InterfaceController.h"
 
+UIColor *OBAGreen = nil;
+NSString *const kNearbyMode = @"nearby";
+NSString *const kBookmarksMode = @"bookmarks";
+
 @interface InterfaceController()
-@property (strong, nonatomic) NSNumber *mode;
+@property (nonatomic) NSString *mode;
 @end
 
 @implementation InterfaceController
+
+#pragma mark - Setup
+
++ (void)initialize {
+    if (self == [InterfaceController class]) {
+        if (!OBAGreen) {
+            OBAGreen = [UIColor colorWithRed:0.47 green:0.67 blue:0.21 alpha:1.0];
+        }
+    }
+}
 
 - (void)awakeWithContext:(id)context {
     [super awakeWithContext:context];
@@ -23,57 +37,69 @@
         [session activateSession];
     }
 
-    [self setNearbyHighlighted];
+    [self setupImages];
+    self.mode = kNearbyMode;
 }
 
-- (void)setNearbyHighlighted {
-    [self.nearbyGroup setBackgroundColor:[UIColor blackColor]];
+- (void)setupImages {
     UIImage *nearbyPNG = [UIImage imageNamed:@"Near Me Filled-50.png"];
     nearbyPNG = [nearbyPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-
     [self.nearbyImage setImage:nearbyPNG];
-    [self.nearbyImage setTintColor:[UIColor greenColor]];
+
+    UIImage *bookmarksPNG = [UIImage imageNamed:@"Bookmark Ribbon Filled-50.png"];
+    bookmarksPNG = [bookmarksPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    [self.bookmarksImage setImage:bookmarksPNG];
+}
+
+#pragma mark - Modes
+
+- (void)setMode:(NSString *)mode {
+    BOOL nearbyMode = [mode isEqualToString:kNearbyMode];
+
+    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
+    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
+    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
+    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor blackColor] : OBAGreen];
+
+    [self.table setNumberOfRows:0 withRowType:@"StopRow"];
+    _mode = mode;
 }
 
 - (IBAction)nearbyPressed {
-    if ([[WCSession defaultSession] isReachable]) {
-        [self clearTable];
-        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
-        [[WCSession defaultSession] sendMessage:request
-                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       [self updateNearbyWithMessage:replyMessage];
-                                   }
-                                   errorHandler:^(NSError *error) {
-                                       // do something
-                                   }
-         ];
-    } else {
-        //phone unreachable
+    if (![self.mode isEqualToString:kNearbyMode]) {
+        self.mode = kNearbyMode;
+        if ([[WCSession defaultSession] isReachable]) {
+            NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+            [[WCSession defaultSession] sendMessage:request
+                                       replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                           [self updateNearbyWithMessage:replyMessage];
+                                       }
+                                       errorHandler:^(NSError *error) {
+                                           // do something
+                                       }
+             ];
+        } else {
+            //phone unreachable
+        }
     }
 }
 
 - (IBAction)bookmarksPressed {
-    if ([[WCSession defaultSession] isReachable]) {
-        [self clearTable];
-        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
-        [[WCSession defaultSession] sendMessage:request
-                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       [self updateBookmarksWithMessage:replyMessage];
-                                   }
-                                   errorHandler:^(NSError *error) {
-                                       // do something
-                                   }
-         ];
-    } else {
-        //phone unreachable
-    }
-}
-
-- (void)clearTable {
-    if ([self.table numberOfRows] > 1){
-        NSRange rowRange = NSMakeRange(0, ([self.table numberOfRows]));
-        NSIndexSet *rowIndexSet = [NSIndexSet indexSetWithIndexesInRange:rowRange];
-        [self.table removeRowsAtIndexes:rowIndexSet];
+    if (![self.mode isEqualToString:kBookmarksMode]) {
+        self.mode = kBookmarksMode;
+        if ([[WCSession defaultSession] isReachable]) {
+            NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+            [[WCSession defaultSession] sendMessage:request
+                                       replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                           [self updateBookmarksWithMessage:replyMessage];
+                                       }
+                                       errorHandler:^(NSError *error) {
+                                           // do something
+                                       }
+             ];
+        } else {
+            //phone unreachable
+        }
     }
 }
 
