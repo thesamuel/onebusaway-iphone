@@ -18,7 +18,7 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 @implementation InterfaceController
 
-#pragma mark - Setup
+#pragma mark - Life Cycles
 
 + (void)initialize {
     if (self == [InterfaceController class]) {
@@ -51,55 +51,79 @@ NSString *const kBookmarksMode = @"bookmarks";
     [self.bookmarksImage setImage:bookmarksPNG];
 }
 
-#pragma mark - Modes
-
-- (void)setMode:(NSString *)mode {
-    BOOL nearbyMode = [mode isEqualToString:kNearbyMode];
-
-    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
-    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
-    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
-    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor blackColor] : OBAGreen];
-
-    [self.table setNumberOfRows:0 withRowType:@"StopRow"];
-    _mode = mode;
+- (void)willActivate {
+    // This method is called when watch view controller is about to be visible to user
+    [super willActivate];
 }
+
+- (void)didDeactivate {
+    // This method is called when watch view controller is no longer visible
+    [super didDeactivate];
+}
+
+#pragma mark - Mode Switching Methods
 
 - (IBAction)nearbyPressed {
     if (![self.mode isEqualToString:kNearbyMode]) {
         self.mode = kNearbyMode;
-        if ([[WCSession defaultSession] isReachable]) {
-            NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
-            [[WCSession defaultSession] sendMessage:request
-                                       replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                           [self updateNearbyWithMessage:replyMessage];
-                                       }
-                                       errorHandler:^(NSError *error) {
-                                           // do something
-                                       }
-             ];
-        } else {
-            //phone unreachable
-        }
     }
 }
 
 - (IBAction)bookmarksPressed {
     if (![self.mode isEqualToString:kBookmarksMode]) {
         self.mode = kBookmarksMode;
-        if ([[WCSession defaultSession] isReachable]) {
-            NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
-            [[WCSession defaultSession] sendMessage:request
-                                       replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                           [self updateBookmarksWithMessage:replyMessage];
-                                       }
-                                       errorHandler:^(NSError *error) {
-                                           // do something
-                                       }
-             ];
-        } else {
-            //phone unreachable
-        }
+    }
+}
+
+- (void)setMode:(NSString *)mode {
+    BOOL nearbyMode = [mode isEqualToString:kNearbyMode];
+
+    // Begin updating rows
+    [self.table setNumberOfRows:0 withRowType:@"StopRow"];
+    (nearbyMode) ? [self requestNearby] : [self requestBookmarks];
+
+    // Update Switch
+    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
+    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
+    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
+    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor blackColor] : OBAGreen];
+
+    _mode = mode;
+}
+
+#pragma mark - Connectivity
+
+- (void)requestNearby {
+    if ([[WCSession defaultSession] isReachable]) {
+        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+        [[WCSession defaultSession] sendMessage:request
+                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                       [self updateNearbyWithMessage:replyMessage];
+                                   }
+                                   errorHandler:^(NSError *error) {
+                                       // do something
+                                   }
+         ];
+    } else {
+        //phone unreachable
+    }
+}
+
+
+
+- (void)requestBookmarks {
+    if ([[WCSession defaultSession] isReachable]) {
+        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+        [[WCSession defaultSession] sendMessage:request
+                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                       [self updateBookmarksWithMessage:replyMessage];
+                                   }
+                                   errorHandler:^(NSError *error) {
+                                       // do something
+                                   }
+         ];
+    } else {
+        //phone unreachable
     }
 }
 
@@ -147,16 +171,6 @@ NSString *const kBookmarksMode = @"bookmarks";
         [controller.stop setText:[message objectForKey:@"name"]];
         [controller.status setText:@"none upcoming"];
     }
-}
-
-- (void)willActivate {
-    // This method is called when watch view controller is about to be visible to user
-    [super willActivate];
-}
-
-- (void)didDeactivate {
-    // This method is called when watch view controller is no longer visible
-    [super didDeactivate];
 }
 
 @end
