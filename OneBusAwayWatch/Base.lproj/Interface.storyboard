@@ -33,6 +33,7 @@
                                     </connections>
                                 </button>
                             </items>
+                            <color key="backgroundColor" red="0.46515971422195435" green="0.67239880561828613" blue="0.16945198178291321" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </group>
                         <table alignment="left" id="rES-Pz-ffn">
                             <items>
@@ -72,6 +73,7 @@
                     <connections>
                         <outlet property="bookmarksGroup" destination="0I3-MF-OnZ" id="rYu-BP-q39"/>
                         <outlet property="bookmarksImage" destination="x1S-Js-g6o" id="oWC-xj-uiz"/>
+                        <outlet property="modeGroup" destination="OWB-tj-PiJ" id="DlD-1V-A2f"/>
                         <outlet property="nearbyGroup" destination="Fnn-rm-cT3" id="gJJ-5T-dxO"/>
                         <outlet property="nearbyImage" destination="9yM-oc-RF6" id="qcE-PX-Lki"/>
                         <outlet property="table" destination="rES-Pz-ffn" id="DcJ-Q7-MPe"/>

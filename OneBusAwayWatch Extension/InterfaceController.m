@@ -37,11 +37,12 @@ NSString *const kBookmarksMode = @"bookmarks";
         [session activateSession];
     }
 
-    [self setupImages];
+    [self setupUI];
     self.mode = kNearbyMode;
 }
 
-- (void)setupImages {
+- (void)setupUI {
+    [self.modeGroup setBackgroundColor:[UIColor clearColor]];
     UIImage *nearbyPNG = [UIImage imageNamed:@"Near Me Filled-50.png"];
     nearbyPNG = [nearbyPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     [self.nearbyImage setImage:nearbyPNG];
@@ -83,10 +84,10 @@ NSString *const kBookmarksMode = @"bookmarks";
     (nearbyMode) ? [self requestNearby] : [self requestBookmarks];
 
     // Update Switch
-    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
-    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
-    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
-    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor blackColor] : OBAGreen];
+    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor clearColor] : OBAGreen];
+    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor clearColor]];
+    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor clearColor]];
+    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor clearColor] : OBAGreen];
 
     _mode = mode;
 }

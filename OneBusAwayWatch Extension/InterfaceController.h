@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, OBAWatchResponseType) {
 
 @interface InterfaceController : WKInterfaceController<WCSessionDelegate>
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *table;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceGroup *modeGroup;
 
 // Nearby tab
 - (IBAction)nearbyPressed;
