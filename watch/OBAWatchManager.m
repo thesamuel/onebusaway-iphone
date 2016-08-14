@@ -89,11 +89,17 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
     //OBASearchResult *result = [OBASearchResult resultFromList:list];
     NSMutableArray *stopsArray = [NSMutableArray new];
     for (OBAStopV2 *stop in list.values) {
-        NSDictionary *stopDictionary = @{@"stopName":stop.name,
-                                       @"stopId":stop.code,
-                                       @"stopDirection":stop.direction,
-                                       @"name":[NSString stringWithFormat:@"%@ [%@]", stop.name, stop.direction]};
-        [stopsArray addObject:stopDictionary];
+        if (stop.name && stop.code) {
+            NSMutableDictionary *stopDictionary = [NSMutableDictionary new];
+            [stopDictionary setObject:stop.name forKey:@"stopName"];
+            [stopDictionary setObject:stop.code forKey:@"stopId"];
+            if (stop.direction) {
+                [stopDictionary setObject:stop.direction forKey:@"stopDirection"];
+            }
+            NSString *name = (stop.direction) ? [NSString stringWithFormat:@"%@ [%@]", stop.name, stop.direction] : stop.name;
+            [stopDictionary setObject:name forKey:@"name"];
+            [stopsArray addObject:stopDictionary];
+        }
     }
     return stopsArray;
 }

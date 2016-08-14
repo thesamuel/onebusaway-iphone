@@ -10,11 +10,30 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController">
                     <items>
-                        <button width="1" alignment="left" title="Refresh" id="q5d-0C-oEP">
-                            <connections>
-                                <action selector="refreshPressed" destination="AgC-eL-Hgc" id="xTP-zY-QYS"/>
-                            </connections>
-                        </button>
+                        <group width="1" height="0.25" alignment="left" id="OWB-tj-PiJ">
+                            <items>
+                                <button alignment="left" verticalAlignment="center" id="q5d-0C-oEP">
+                                    <group key="contentGroup" width="0.5" height="1" alignment="left" id="Fnn-rm-cT3">
+                                        <items>
+                                            <imageView width="25" height="25" alignment="center" verticalAlignment="center" image="Near Me Filled-50.png" id="9yM-oc-RF6"/>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <action selector="nearbyPressed" destination="AgC-eL-Hgc" id="1Bb-4E-y9b"/>
+                                    </connections>
+                                </button>
+                                <button alignment="right" verticalAlignment="center" id="h5j-7y-KTS">
+                                    <group key="contentGroup" width="0.5" height="1" alignment="left" id="0I3-MF-OnZ">
+                                        <items>
+                                            <imageView width="25" height="25" alignment="center" verticalAlignment="center" image="Bookmark Ribbon Filled-50.png" id="x1S-Js-g6o"/>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <action selector="bookmarksPressed" destination="AgC-eL-Hgc" id="HqQ-vr-Yeh"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
                         <table alignment="left" id="rES-Pz-ffn">
                             <items>
                                 <tableRow identifier="StopRow" id="9Gd-da-Lpy" customClass="OBARowController">
@@ -51,6 +70,10 @@
                         </table>
                     </items>
                     <connections>
+                        <outlet property="bookmarksGroup" destination="0I3-MF-OnZ" id="rYu-BP-q39"/>
+                        <outlet property="bookmarksImage" destination="x1S-Js-g6o" id="oWC-xj-uiz"/>
+                        <outlet property="nearbyGroup" destination="Fnn-rm-cT3" id="gJJ-5T-dxO"/>
+                        <outlet property="nearbyImage" destination="9yM-oc-RF6" id="qcE-PX-Lki"/>
                         <outlet property="table" destination="rES-Pz-ffn" id="DcJ-Q7-MPe"/>
                     </connections>
                 </controller>

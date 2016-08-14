@@ -8,10 +8,8 @@
 
 #import "InterfaceController.h"
 
-@interface InterfaceController(){
-    
-}
-
+@interface InterfaceController()
+@property (strong, nonatomic) NSNumber *mode;
 @end
 
 @implementation InterfaceController
@@ -19,26 +17,27 @@
 - (void)awakeWithContext:(id)context {
     [super awakeWithContext:context];
     
-    [self refresh];
-}
-
-- (IBAction)refreshPressed {
-    if ([self.table numberOfRows] > 1){
-        NSRange rowRange = NSMakeRange(0, ([self.table numberOfRows]));
-        NSIndexSet *rowIndexSet = [NSIndexSet indexSetWithIndexesInRange:rowRange];
-        [self.table removeRowsAtIndexes:rowIndexSet];
-    }
-    [self refresh];
-}
-
-- (void)refresh {
     if ([WCSession isSupported]) {
         WCSession* session = [WCSession defaultSession];
         session.delegate = self;
         [session activateSession];
     }
-    
+
+    [self setNearbyHighlighted];
+}
+
+- (void)setNearbyHighlighted {
+    [self.nearbyGroup setBackgroundColor:[UIColor blackColor]];
+    UIImage *nearbyPNG = [UIImage imageNamed:@"Near Me Filled-50.png"];
+    nearbyPNG = [nearbyPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+
+    [self.nearbyImage setImage:nearbyPNG];
+    [self.nearbyImage setTintColor:[UIColor greenColor]];
+}
+
+- (IBAction)nearbyPressed {
     if ([[WCSession defaultSession] isReachable]) {
+        [self clearTable];
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
         [[WCSession defaultSession] sendMessage:request
                                    replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
@@ -50,6 +49,31 @@
          ];
     } else {
         //phone unreachable
+    }
+}
+
+- (IBAction)bookmarksPressed {
+    if ([[WCSession defaultSession] isReachable]) {
+        [self clearTable];
+        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+        [[WCSession defaultSession] sendMessage:request
+                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
+                                       [self updateBookmarksWithMessage:replyMessage];
+                                   }
+                                   errorHandler:^(NSError *error) {
+                                       // do something
+                                   }
+         ];
+    } else {
+        //phone unreachable
+    }
+}
+
+- (void)clearTable {
+    if ([self.table numberOfRows] > 1){
+        NSRange rowRange = NSMakeRange(0, ([self.table numberOfRows]));
+        NSIndexSet *rowIndexSet = [NSIndexSet indexSetWithIndexesInRange:rowRange];
+        [self.table removeRowsAtIndexes:rowIndexSet];
     }
 }
 

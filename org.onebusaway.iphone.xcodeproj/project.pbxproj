@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		31040260B414257944BD0C2D /* Pods_OneBusAway.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73CB0AC7A68F6DE563855845 /* Pods_OneBusAway.framework */; };
+		617AD2E01D6046850043DE26 /* Bookmark Ribbon Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617AD2DF1D6046850043DE26 /* Bookmark Ribbon Filled-50.png */; };
+		617AD2E21D6046C30043DE26 /* Near Me Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */; };
+		617AD2E31D6047430043DE26 /* Bookmark Ribbon Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617AD2DF1D6046850043DE26 /* Bookmark Ribbon Filled-50.png */; };
+		617AD2E41D6047450043DE26 /* Near Me Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */; };
 		61CE2B601D5059FD00CDEC24 /* OBAWatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */; };
 		61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9051D485ADD0029D18F /* Interface.storyboard */; };
 		61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9081D485ADD0029D18F /* Assets.xcassets */; };
@@ -408,6 +412,8 @@
 		2B80B704E740E0E6BB8699E7 /* Pods-OneBusAwayTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneBusAwayTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OneBusAwayTests/Pods-OneBusAwayTests.release.xcconfig"; sourceTree = "<group>"; };
 		4F8EB54B20802AD353BBD9F0 /* Pods-OneBusAway.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneBusAway.release.xcconfig"; path = "Pods/Target Support Files/Pods-OneBusAway/Pods-OneBusAway.release.xcconfig"; sourceTree = "<group>"; };
 		5915BB5B4ED79BCFF0C6D8B4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		617AD2DF1D6046850043DE26 /* Bookmark Ribbon Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Bookmark Ribbon Filled-50.png"; sourceTree = "<group>"; };
+		617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Near Me Filled-50.png"; sourceTree = "<group>"; };
 		61CE2B5E1D5059FD00CDEC24 /* OBAWatchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAWatchManager.h; sourceTree = "<group>"; };
 		61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAWatchManager.m; sourceTree = "<group>"; };
 		61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneBusAwayWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -996,6 +1002,8 @@
 		61D1F9131D485ADE0029D18F /* OneBusAwayWatch Extension */ = {
 			isa = PBXGroup;
 			children = (
+				617AD2DF1D6046850043DE26 /* Bookmark Ribbon Filled-50.png */,
+				617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */,
 				61D1F9141D485ADE0029D18F /* InterfaceController.h */,
 				61D1F9151D485ADE0029D18F /* InterfaceController.m */,
 				61D1F92C1D486D2A0029D18F /* OBARowController.h */,
@@ -2068,7 +2076,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				617AD2E31D6047430043DE26 /* Bookmark Ribbon Filled-50.png in Resources */,
 				61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */,
+				617AD2E41D6047450043DE26 /* Near Me Filled-50.png in Resources */,
 				61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2077,7 +2087,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				617AD2E01D6046850043DE26 /* Bookmark Ribbon Filled-50.png in Resources */,
 				61D1F91B1D485ADE0029D18F /* Assets.xcassets in Resources */,
+				617AD2E21D6046C30043DE26 /* Near Me Filled-50.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
