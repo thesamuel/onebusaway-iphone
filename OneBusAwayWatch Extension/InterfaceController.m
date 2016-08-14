@@ -13,7 +13,11 @@ NSString *const kNearbyMode = @"nearby";
 NSString *const kBookmarksMode = @"bookmarks";
 
 @interface InterfaceController()
+
 @property (nonatomic) NSString *mode;
+@property (strong, nonatomic) NSDictionary *bookmarksMessage;
+@property (strong, nonatomic) NSDictionary *nearbyMessage;
+
 @end
 
 @implementation InterfaceController
@@ -95,11 +99,19 @@ NSString *const kBookmarksMode = @"bookmarks";
 #pragma mark - Connectivity
 
 - (void)requestNearby {
+    if (self.nearbyMessage) {
+        [self updateNearbyWithMessage:self.nearbyMessage];
+        return;
+    }
+
     if ([[WCSession defaultSession] isReachable]) {
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
         [[WCSession defaultSession] sendMessage:request
                                    replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       [self updateNearbyWithMessage:replyMessage];
+                                       if ([self.mode isEqualToString:kNearbyMode]) {
+                                           self.nearbyMessage = replyMessage;
+                                           [self updateNearbyWithMessage:replyMessage];
+                                       }
                                    }
                                    errorHandler:^(NSError *error) {
                                        // do something
@@ -113,11 +125,19 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 
 - (void)requestBookmarks {
+    if (self.bookmarksMessage) {
+        [self updateBookmarksWithMessage:self.bookmarksMessage];
+        return;
+    }
+
     if ([[WCSession defaultSession] isReachable]) {
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
         [[WCSession defaultSession] sendMessage:request
                                    replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       [self updateBookmarksWithMessage:replyMessage];
+                                       if ([self.mode isEqualToString:kBookmarksMode]) {
+                                           self.bookmarksMessage = replyMessage;
+                                           [self updateBookmarksWithMessage:replyMessage];
+                                       }
                                    }
                                    errorHandler:^(NSError *error) {
                                        // do something
