@@ -6,6 +6,50 @@
     </dependencies>
     <scenes>
         <!--Interface Controller-->
+        <scene sceneID="eED-eN-ACW">
+            <objects>
+                <controller id="Xdl-vK-61A">
+                    <items>
+                        <table alignment="left" id="bbJ-8o-aBw">
+                            <items>
+                                <tableRow identifier="StopRow" id="Rin-BA-S6q" customClass="OBARowController">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" id="5JH-VS-AMN">
+                                        <items>
+                                            <label width="0.20000000000000001" height="1" alignment="left" text="49" textAlignment="center" minimumScaleFactor="0.69999999999999996" id="5lj-9b-XRU">
+                                                <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                                            </label>
+                                            <group width="0.80000000000000004" alignment="left" id="g1s-Bu-h1N">
+                                                <items>
+                                                    <separator height="1" alignment="left" id="rBn-HJ-I4y"/>
+                                                    <group alignment="left" layout="vertical" id="12s-hs-yp1">
+                                                        <items>
+                                                            <label alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="WJT-AQ-Ifa">
+                                                                <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
+                                                            </label>
+                                                            <label alignment="left" verticalAlignment="bottom" text="15 minutes" id="rfb-rz-Zq1">
+                                                                <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                                            </label>
+                                                        </items>
+                                                    </group>
+                                                </items>
+                                            </group>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="route" destination="5lj-9b-XRU" id="dxZ-6y-1z0"/>
+                                        <outlet property="status" destination="rfb-rz-Zq1" id="HYl-Ce-48I"/>
+                                        <outlet property="stop" destination="WJT-AQ-Ifa" id="WWw-0Q-RCV"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="500" y="258"/>
+        </scene>
+        <!--Interface Controller-->
         <scene sceneID="aou-V4-d1y">
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController">
@@ -76,11 +120,11 @@
                         <outlet property="modeGroup" destination="OWB-tj-PiJ" id="DlD-1V-A2f"/>
                         <outlet property="nearbyGroup" destination="Fnn-rm-cT3" id="gJJ-5T-dxO"/>
                         <outlet property="nearbyImage" destination="9yM-oc-RF6" id="qcE-PX-Lki"/>
-                        <outlet property="table" destination="rES-Pz-ffn" id="DcJ-Q7-MPe"/>
+                        <outlet property="stopsTable" destination="rES-Pz-ffn" id="BOT-Vp-9GE"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="375" y="272"/>
+            <point key="canvasLocation" x="246" y="258"/>
         </scene>
     </scenes>
 </document>

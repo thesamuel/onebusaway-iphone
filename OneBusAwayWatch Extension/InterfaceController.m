@@ -80,13 +80,13 @@ NSString *const kBookmarksMode = @"bookmarks";
     BOOL nearbyMode = [mode isEqualToString:kNearbyMode];
 
     // Begin updating rows
-    [self.table setNumberOfRows:0 withRowType:@"StopRow"];
+    [self.stopsTable setNumberOfRows:0 withRowType:@"StopRow"];
     (nearbyMode) ? [self requestNearby] : [self requestBookmarks];
 
     // Update Switch
-    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor clearColor] : OBAGreen];
+    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
     [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor clearColor]];
-    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor clearColor]];
+    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
     [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor clearColor] : OBAGreen];
 
     _mode = mode;
@@ -131,9 +131,9 @@ NSString *const kBookmarksMode = @"bookmarks";
 - (void)updateNearbyWithMessage:(NSDictionary *)message {
     NSArray *nearbyArray = [message objectForKey:@"response"];
     for (NSDictionary *nearbyStop in nearbyArray) {
-        NSInteger index = self.table.numberOfRows;
-        [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
-        OBARowController *controller = [self.table rowControllerAtIndex:index];
+        NSInteger index = self.stopsTable.numberOfRows;
+        [self.stopsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
+        OBARowController *controller = [self.stopsTable rowControllerAtIndex:index];
         [controller.route setText:[nearbyStop objectForKey:@"---"]];
         [controller.stop setText:[nearbyStop objectForKey:@"name"]];
         [controller.status setText:@"n/a"];
@@ -142,9 +142,9 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 - (void)updateBookmarksWithMessage:(NSDictionary *)message {
     NSLog(@"Contents of connectivity message: \n%@", message);
-    NSInteger index = self.table.numberOfRows;
-    [self.table insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
-    OBARowController *controller = [self.table rowControllerAtIndex:index];
+    NSInteger index = self.stopsTable.numberOfRows;
+    [self.stopsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
+    OBARowController *controller = [self.stopsTable rowControllerAtIndex:index];
     if ([message objectForKey:@"bestAvailableName"]) {
         UIColor *departureStatusColor;
         switch ([[message objectForKey:@"departureStatus"] intValue]) {
