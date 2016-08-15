@@ -99,10 +99,10 @@ NSString *const kBookmarksMode = @"bookmarks";
 #pragma mark - Connectivity
 
 - (void)requestNearby {
-    if (self.nearbyMessage) {
-        [self updateNearbyWithMessage:self.nearbyMessage];
-        return;
-    }
+//    if (self.nearbyMessage) {
+//        [self updateNearbyWithMessage:self.nearbyMessage];
+//        return;
+//    }
 
     if ([[WCSession defaultSession] isReachable]) {
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
@@ -125,13 +125,13 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 
 - (void)requestBookmarks {
-    if (self.bookmarksMessage) {
-        [self updateBookmarksWithMessage:self.bookmarksMessage];
-        return;
-    }
+//    if (self.bookmarksMessage) {
+//        [self updateBookmarksWithMessage:self.bookmarksMessage];
+//        return;
+//    }
 
     if ([[WCSession defaultSession] isReachable]) {
-        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
+        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeBookmarks)};
         [[WCSession defaultSession] sendMessage:request
                                    replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
                                        if ([self.mode isEqualToString:kBookmarksMode]) {
@@ -149,48 +149,51 @@ NSString *const kBookmarksMode = @"bookmarks";
 }
 
 - (void)updateNearbyWithMessage:(NSDictionary *)message {
-    NSArray *nearbyArray = [message objectForKey:@"response"];
-    for (NSDictionary *nearbyStop in nearbyArray) {
-        NSInteger index = self.stopsTable.numberOfRows;
-        [self.stopsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
-        OBARowController *controller = [self.stopsTable rowControllerAtIndex:index];
-        [controller.route setText:[nearbyStop objectForKey:@"---"]];
-        [controller.stop setText:[nearbyStop objectForKey:@"name"]];
+    NSArray *nearbys = [message objectForKey:@"response"];
+    NSUInteger numberOfRows = nearbys.count;
+    [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
+    for (int i = 0; i < numberOfRows; i++) {
+        OBARowController *controller = [self.stopsTable rowControllerAtIndex:i];
+        [controller.route setText:[nearbys[i] objectForKey:@"---"]];
+        [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
         [controller.status setText:@"n/a"];
     }
 }
 
+// TODO: data is now sent as a package. update accordingly.
 - (void)updateBookmarksWithMessage:(NSDictionary *)message {
-    NSLog(@"Contents of connectivity message: \n%@", message);
-    NSInteger index = self.stopsTable.numberOfRows;
-    [self.stopsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withRowType:@"StopRow"];
-    OBARowController *controller = [self.stopsTable rowControllerAtIndex:index];
-    if ([message objectForKey:@"bestAvailableName"]) {
-        UIColor *departureStatusColor;
-        switch ([[message objectForKey:@"departureStatus"] intValue]) {
-            case 1: // early
-                departureStatusColor = [UIColor greenColor];
-                break;
-            case 2: // on time
-                departureStatusColor = [UIColor whiteColor];
-                break;
-            case 3: // delayed
-                departureStatusColor = [UIColor blueColor];
-                break;
-            default:
-                break;
+    NSArray *bookmarks = [message objectForKey:@"response"];
+    NSUInteger numberOfRows = bookmarks.count;
+    [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
+    for (int i = 0; i < numberOfRows; i++) {
+        OBARowController *controller = [self.stopsTable rowControllerAtIndex:i];
+        if ([bookmarks[i] objectForKey:@"bestAvailableName"]) {
+            UIColor *departureStatusColor;
+            switch ([[bookmarks[i] objectForKey:@"departureStatus"] intValue]) {
+                case 1: // early
+                    departureStatusColor = [UIColor greenColor];
+                    break;
+                case 2: // on time
+                    departureStatusColor = [UIColor whiteColor];
+                    break;
+                case 3: // delayed
+                    departureStatusColor = [UIColor blueColor];
+                    break;
+                default:
+                    break;
+            }
+            [controller.route setText:[bookmarks[i] objectForKey:@"bestAvailableName"]];
+            [controller.stop setText:[bookmarks[i] objectForKey:@"name"]];
+            NSString *departureString = [NSString stringWithFormat:@"in %@ minutes", [bookmarks[i] objectForKey:@"minutesUntilBestDeparture"]];
+            [controller.status setText:departureString];
+            if (departureStatusColor) {
+                [controller.route setTextColor:departureStatusColor];
+            }
+        } else {
+            [controller.route setText:@"--"];
+            [controller.stop setText:[bookmarks[i] objectForKey:@"name"]];
+            [controller.status setText:@"none upcoming"];
         }
-        [controller.route setText:[message objectForKey:@"bestAvailableName"]];
-        [controller.stop setText:[message objectForKey:@"name"]];
-        NSString *departureString = [NSString stringWithFormat:@"in %@ minutes", [message objectForKey:@"minutesUntilBestDeparture"]];
-        [controller.status setText:departureString];
-        if (departureStatusColor) {
-            [controller.route setTextColor:departureStatusColor];
-        }
-    } else if (message) {
-        [controller.route setText:@"--"];
-        [controller.stop setText:[message objectForKey:@"name"]];
-        [controller.status setText:@"none upcoming"];
     }
 }
 

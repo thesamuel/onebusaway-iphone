@@ -105,7 +105,7 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
 }
 
 #pragma mark - Bookmark Methods
-
+// TODO: figure out semaphores
 - (NSArray *)bookmarks {
     OBAModelDAO *modelDAO = [OBAApplication sharedApplication].modelDao;
     NSMutableArray *allBookmarks = [NSMutableArray new];
@@ -114,17 +114,21 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
         [allBookmarks addObjectsFromArray:group.bookmarks];
     }
 
-    __block NSMutableArray* bookmarkArray;
+    __block NSMutableArray* bookmarkArray = [NSMutableArray new];
     for (OBABookmarkV2 *bookmark in allBookmarks) {
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         [[OBAApplication sharedApplication].modelService requestStopForID:bookmark.stopId
                                                             minutesBefore:0
                                                              minutesAfter:kOBAWatchBookmarkMinutesAfter].then(^(OBAArrivalsAndDeparturesForStopV2 *response) {
             NSArray<OBAArrivalAndDepartureV2*> *matchingDepartures = [bookmark matchingArrivalsAndDeparturesForStop:response];
             OBAArrivalAndDepartureV2 *nextDeparture = matchingDepartures.firstObject;
             [bookmarkArray addObject:[self createDictionaryForBookmark:bookmark withArrivalAndDeparture:nextDeparture]];
+            dispatch_semaphore_signal(semaphore);
         }).catch(^(NSError *error) {
             NSLog(@"Failed to load departure for bookmark: %@", error);
+            dispatch_semaphore_signal(semaphore);
         });
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     }
     return bookmarkArray;
 }

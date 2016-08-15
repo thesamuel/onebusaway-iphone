@@ -36,11 +36,6 @@
                                             </group>
                                         </items>
                                     </group>
-                                    <connections>
-                                        <outlet property="route" destination="5lj-9b-XRU" id="dxZ-6y-1z0"/>
-                                        <outlet property="status" destination="rfb-rz-Zq1" id="HYl-Ce-48I"/>
-                                        <outlet property="stop" destination="WJT-AQ-Ifa" id="WWw-0Q-RCV"/>
-                                    </connections>
                                 </tableRow>
                             </items>
                         </table>
