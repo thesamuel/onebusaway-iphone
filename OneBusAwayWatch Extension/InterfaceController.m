@@ -99,10 +99,13 @@ NSString *const kBookmarksMode = @"bookmarks";
 #pragma mark - Connectivity
 
 - (void)requestNearby {
-//    if (self.nearbyMessage) {
-//        [self updateNearbyWithMessage:self.nearbyMessage];
-//        return;
-//    }
+    if (self.nearbyMessage) {
+        [self updateNearbyWithMessage:self.nearbyMessage];
+        return;
+    }
+
+    [self.loadingLabel setHidden:NO];
+    [self.stopsTable setHidden:YES];
 
     if ([[WCSession defaultSession] isReachable]) {
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
@@ -125,10 +128,13 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 
 - (void)requestBookmarks {
-//    if (self.bookmarksMessage) {
-//        [self updateBookmarksWithMessage:self.bookmarksMessage];
-//        return;
-//    }
+    if (self.bookmarksMessage) {
+        [self updateBookmarksWithMessage:self.bookmarksMessage];
+        return;
+    }
+
+    [self.loadingLabel setHidden:NO];
+    [self.stopsTable setHidden:YES];
 
     if ([[WCSession defaultSession] isReachable]) {
         NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeBookmarks)};
@@ -158,6 +164,8 @@ NSString *const kBookmarksMode = @"bookmarks";
         [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
         [controller.status setText:@"n/a"];
     }
+    [self.loadingLabel setHidden:YES];
+    [self.stopsTable setHidden:NO];
 }
 
 // TODO: data is now sent as a package. update accordingly.
@@ -195,6 +203,8 @@ NSString *const kBookmarksMode = @"bookmarks";
             [controller.status setText:@"none upcoming"];
         }
     }
+    [self.loadingLabel setHidden:YES];
+    [self.stopsTable setHidden:NO];
 }
 
 @end
