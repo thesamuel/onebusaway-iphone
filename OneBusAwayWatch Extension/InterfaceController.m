@@ -72,12 +72,14 @@ NSString *const kBookmarksMode = @"bookmarks";
     if (![self.mode isEqualToString:kNearbyMode]) {
         self.mode = kNearbyMode;
     }
+    [self requestNearby];
 }
 
 - (IBAction)bookmarksPressed {
     if (![self.mode isEqualToString:kBookmarksMode]) {
         self.mode = kBookmarksMode;
     }
+    [self requestBookmarks];
 }
 
 - (void)setMode:(NSString *)mode {
@@ -98,10 +100,11 @@ NSString *const kBookmarksMode = @"bookmarks";
 
 #pragma mark - Connectivity
 
+// TODO: add automatic re-loading.
 - (void)requestNearby {
     if (self.nearbyMessage) {
         [self updateNearbyWithMessage:self.nearbyMessage];
-        return;
+        //return; // TODO: remove this
     }
 
     [self.loadingLabel setHidden:NO];
@@ -124,8 +127,6 @@ NSString *const kBookmarksMode = @"bookmarks";
         //phone unreachable
     }
 }
-
-
 
 - (void)requestBookmarks {
     if (self.bookmarksMessage) {

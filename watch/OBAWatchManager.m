@@ -13,12 +13,12 @@
 static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
 static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
 
-@interface OBAWatchManager () {
-    MKCoordinateRegion region;
-}
+@interface OBAWatchManager ()
 
 @property (nonatomic, strong) id<OBAModelServiceRequest> request;
 @property (nonatomic, strong) OBAModelService *modelService;
+@property (nonatomic, strong) CLLocation *lastLocation;
+@property (nonatomic) MKCoordinateRegion region;
 
 @end
 
@@ -61,11 +61,11 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
 
 - (void)refreshCurrentRegion {
     OBALocationManager *lm = [OBAApplication sharedApplication].locationManager;
-    CLLocation *location = lm.currentLocation;
+    self.lastLocation = lm.currentLocation;
 
-    if (location) {
+    if (self.lastLocation) {
         //double radius = MAX(location.horizontalAccuracy, OBAMinMapRadiusInMeters);
-        region = [OBASphericalGeometryLibrary createRegionWithCenter:location.coordinate
+        self.region = [OBASphericalGeometryLibrary createRegionWithCenter:self.lastLocation.coordinate
                                                            latRadius:kOBANearbyRadiusInMeters
                                                            lonRadius:kOBANearbyRadiusInMeters];
     }
@@ -75,7 +75,7 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
     [self refreshCurrentRegion];
     __block NSArray *stops;
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    _request = [_modelService requestStopsForRegion:region completionBlock:^(id jsonData, NSUInteger responseCode, NSError *error) {
+    _request = [_modelService requestStopsForRegion:self.region completionBlock:^(id jsonData, NSUInteger responseCode, NSError *error) {
         //TODO: get this wrapper to work! (error codes)
         //WrapperCompletion(jsonData, responseCode, error, ^(id data) {
         stops = [self arrayOfNearbyStopsWithJson:jsonData];
@@ -87,12 +87,16 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
 
 - (NSArray *)arrayOfNearbyStopsWithJson:(OBAListWithRangeAndReferencesV2 *)list {
     //OBASearchResult *result = [OBASearchResult resultFromList:list];
+//    NSArray *sortedList = [self sortStopsByDistance:list.values];
     NSMutableArray *stopsArray = [NSMutableArray new];
     for (OBAStopV2 *stop in list.values) {
-        if (stop.name && stop.code) {
+        if (stop.name && stop.code) { // TODO: remove this.
             NSMutableDictionary *stopDictionary = [NSMutableDictionary new];
             [stopDictionary setObject:stop.name forKey:@"stopName"];
             [stopDictionary setObject:stop.code forKey:@"stopId"];
+            [stopDictionary setObject:stop.routeNamesAsString forKey:@"routes"]; // TODO: receive by watch
+            CLLocationDistance distanceFromCurrentLocation = [stop.location distanceFromLocation:self.lastLocation];
+            [stopDictionary setObject:[NSNumber numberWithDouble:distanceFromCurrentLocation] forKey:@"distance"];
             if (stop.direction) {
                 [stopDictionary setObject:stop.direction forKey:@"stopDirection"];
             }
@@ -101,8 +105,22 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
             [stopsArray addObject:stopDictionary];
         }
     }
+    NSLog(@"CURRENT_LOCATION: %@", self.lastLocation);
+    NSLog(@"\n\nWATCH_STOPS:%@", stopsArray);
+    NSSortDescriptor *sortByDistance = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
+    [stopsArray sortUsingDescriptors:@[sortByDistance]];
+    NSLog(@"\n\nSORTED_WATCH_STOPS:%@", stopsArray);
     return stopsArray;
 }
+
+//- (NSArray *)sortStopsByDistance:(NSArray *)stops {
+////    return [stops sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+////        OBAStopV2 *stop1 = obj1, *stop2 = obj2;
+////        CLLocationDistance d1 = [stop1.location distanceFromLocation:self.lastLocation];
+////        CLLocationDistance d2 = [stop2.location distanceFromLocation:self.lastLocation];
+////        return d1 < d2 ? NSOrderedAscending : d1 > d2 ? NSOrderedDescending : NSOrderedSame;
+////    }];
+//}
 
 #pragma mark - Bookmark Methods
 // TODO: figure out semaphores
