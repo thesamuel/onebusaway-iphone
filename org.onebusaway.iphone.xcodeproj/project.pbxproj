@@ -21,7 +21,7 @@
 		61D1F9191D485ADE0029D18F /* ExtensionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */; };
 		61D1F91B1D485ADE0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F91A1D485ADE0029D18F /* Assets.xcassets */; };
 		61D1F91F1D485ADE0029D18F /* OneBusAwayWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */; };
-		61D1F92E1D486D2A0029D18F /* OBARowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F92D1D486D2A0029D18F /* OBARowController.m */; };
+		61D1F92E1D486D2A0029D18F /* OBABookmarkRowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F92D1D486D2A0029D18F /* OBABookmarkRowController.m */; };
 		669B2F781AEBFCB300CF2367 /* OBAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 669B2F771AEBFCB300CF2367 /* OBAAnalytics.m */; };
 		669B2F801AEBFEBF00CF2367 /* OBARegionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 669B2F7F1AEBFEBF00CF2367 /* OBARegionHelper.m */; };
 		923FE680176082A7009AFDE8 /* UITableViewController+oba_Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 923FE67F176082A7009AFDE8 /* UITableViewController+oba_Additions.m */; };
@@ -427,8 +427,8 @@
 		61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtensionDelegate.m; sourceTree = "<group>"; };
 		61D1F91A1D485ADE0029D18F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		61D1F91C1D485ADE0029D18F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		61D1F92C1D486D2A0029D18F /* OBARowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBARowController.h; sourceTree = "<group>"; };
-		61D1F92D1D486D2A0029D18F /* OBARowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBARowController.m; sourceTree = "<group>"; };
+		61D1F92C1D486D2A0029D18F /* OBABookmarkRowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBABookmarkRowController.h; sourceTree = "<group>"; };
+		61D1F92D1D486D2A0029D18F /* OBABookmarkRowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBABookmarkRowController.m; sourceTree = "<group>"; };
 		669B2F761AEBFCB300CF2367 /* OBAAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAAnalytics.h; sourceTree = "<group>"; };
 		669B2F771AEBFCB300CF2367 /* OBAAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAAnalytics.m; sourceTree = "<group>"; };
 		669B2F7E1AEBFEBF00CF2367 /* OBARegionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBARegionHelper.h; sourceTree = "<group>"; };
@@ -1006,8 +1006,8 @@
 				617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */,
 				61D1F9141D485ADE0029D18F /* InterfaceController.h */,
 				61D1F9151D485ADE0029D18F /* InterfaceController.m */,
-				61D1F92C1D486D2A0029D18F /* OBARowController.h */,
-				61D1F92D1D486D2A0029D18F /* OBARowController.m */,
+				61D1F92C1D486D2A0029D18F /* OBABookmarkRowController.h */,
+				61D1F92D1D486D2A0029D18F /* OBABookmarkRowController.m */,
 				61D1F9171D485ADE0029D18F /* ExtensionDelegate.h */,
 				61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */,
 				61D1F91A1D485ADE0029D18F /* Assets.xcassets */,
@@ -2330,7 +2330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61D1F9191D485ADE0029D18F /* ExtensionDelegate.m in Sources */,
-				61D1F92E1D486D2A0029D18F /* OBARowController.m in Sources */,
+				61D1F92E1D486D2A0029D18F /* OBABookmarkRowController.m in Sources */,
 				61D1F9161D485ADE0029D18F /* InterfaceController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

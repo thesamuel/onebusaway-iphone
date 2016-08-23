@@ -8,7 +8,7 @@
 
 #import <WatchKit/WatchKit.h>
 #import <Foundation/Foundation.h>
-#import "OBARowController.h"
+#import "OBABookmarkRowController.h"
 @import WatchConnectivity;
 
 // TODO: sam - declare a common class for these with watch app

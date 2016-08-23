@@ -1,5 +1,5 @@
 //
-//  OBARowController.h
+//  OBABookmarkRowController.h
 //  org.onebusaway.iphone
 //
 //  Created by Sam Gehman on 7/26/16.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 @import WatchKit;
 
-@interface OBARowController : NSObject
+@interface OBABookmarkRowController : NSObject
 
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *route;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *stop;

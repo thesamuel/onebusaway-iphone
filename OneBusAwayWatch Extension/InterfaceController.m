@@ -160,7 +160,7 @@ NSString *const kBookmarksMode = @"bookmarks";
     NSUInteger numberOfRows = nearbys.count;
     [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
     for (int i = 0; i < numberOfRows; i++) {
-        OBARowController *controller = [self.stopsTable rowControllerAtIndex:i];
+        OBABookmarkRowController *controller = [self.stopsTable rowControllerAtIndex:i];
         [controller.route setText:[nearbys[i] objectForKey:@"---"]];
         [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
         [controller.status setText:@"n/a"];
@@ -175,7 +175,7 @@ NSString *const kBookmarksMode = @"bookmarks";
     NSUInteger numberOfRows = bookmarks.count;
     [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
     for (int i = 0; i < numberOfRows; i++) {
-        OBARowController *controller = [self.stopsTable rowControllerAtIndex:i];
+        OBABookmarkRowController *controller = [self.stopsTable rowControllerAtIndex:i];
         if ([bookmarks[i] objectForKey:@"bestAvailableName"]) {
             UIColor *departureStatusColor;
             switch ([[bookmarks[i] objectForKey:@"departureStatus"] intValue]) {

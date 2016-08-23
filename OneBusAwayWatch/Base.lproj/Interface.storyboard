@@ -12,7 +12,7 @@
                     <items>
                         <table alignment="left" id="bbJ-8o-aBw">
                             <items>
-                                <tableRow identifier="StopRow" id="Rin-BA-S6q" customClass="OBARowController">
+                                <tableRow identifier="StopRow" id="Rin-BA-S6q" customClass="OBABookmarkRowController">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" id="5JH-VS-AMN">
                                         <items>
                                             <label width="0.20000000000000001" height="1" alignment="left" text="49" textAlignment="center" minimumScaleFactor="0.69999999999999996" id="5lj-9b-XRU">
@@ -59,7 +59,7 @@
                     <items>
                         <table alignment="left" id="mej-Rh-24N">
                             <items>
-                                <tableRow identifier="StopRow" id="RNJ-pv-YUz" customClass="OBARowController">
+                                <tableRow identifier="StopRow" id="RNJ-pv-YUz" customClass="OBABookmarkRowController">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="0cj-Zp-7tS">
                                         <items>
                                             <label width="1" alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="JGB-CQ-TFX">
