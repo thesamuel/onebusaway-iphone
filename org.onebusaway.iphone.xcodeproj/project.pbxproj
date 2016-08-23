@@ -17,7 +17,7 @@
 		61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9051D485ADD0029D18F /* Interface.storyboard */; };
 		61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9081D485ADD0029D18F /* Assets.xcassets */; };
 		61D1F9101D485ADE0029D18F /* OneBusAwayWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 61D1F90F1D485ADE0029D18F /* OneBusAwayWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		61D1F9161D485ADE0029D18F /* InterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F9151D485ADE0029D18F /* InterfaceController.m */; };
+		61D1F9161D485ADE0029D18F /* OBABookmarksInterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F9151D485ADE0029D18F /* OBABookmarksInterfaceController.m */; };
 		61D1F9191D485ADE0029D18F /* ExtensionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */; };
 		61D1F91B1D485ADE0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F91A1D485ADE0029D18F /* Assets.xcassets */; };
 		61D1F91F1D485ADE0029D18F /* OneBusAwayWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */; };
@@ -421,8 +421,8 @@
 		61D1F9081D485ADD0029D18F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		61D1F90A1D485ADD0029D18F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61D1F90F1D485ADE0029D18F /* OneBusAwayWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "OneBusAwayWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		61D1F9141D485ADE0029D18F /* InterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterfaceController.h; sourceTree = "<group>"; };
-		61D1F9151D485ADE0029D18F /* InterfaceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InterfaceController.m; sourceTree = "<group>"; };
+		61D1F9141D485ADE0029D18F /* OBABookmarksInterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OBABookmarksInterfaceController.h; sourceTree = "<group>"; };
+		61D1F9151D485ADE0029D18F /* OBABookmarksInterfaceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OBABookmarksInterfaceController.m; sourceTree = "<group>"; };
 		61D1F9171D485ADE0029D18F /* ExtensionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionDelegate.h; sourceTree = "<group>"; };
 		61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtensionDelegate.m; sourceTree = "<group>"; };
 		61D1F91A1D485ADE0029D18F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1004,8 +1004,8 @@
 			children = (
 				617AD2DF1D6046850043DE26 /* Bookmark Ribbon Filled-50.png */,
 				617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */,
-				61D1F9141D485ADE0029D18F /* InterfaceController.h */,
-				61D1F9151D485ADE0029D18F /* InterfaceController.m */,
+				61D1F9141D485ADE0029D18F /* OBABookmarksInterfaceController.h */,
+				61D1F9151D485ADE0029D18F /* OBABookmarksInterfaceController.m */,
 				61D1F92C1D486D2A0029D18F /* OBABookmarkRowController.h */,
 				61D1F92D1D486D2A0029D18F /* OBABookmarkRowController.m */,
 				61D1F9171D485ADE0029D18F /* ExtensionDelegate.h */,
@@ -2331,7 +2331,7 @@
 			files = (
 				61D1F9191D485ADE0029D18F /* ExtensionDelegate.m in Sources */,
 				61D1F92E1D486D2A0029D18F /* OBABookmarkRowController.m in Sources */,
-				61D1F9161D485ADE0029D18F /* InterfaceController.m in Sources */,
+				61D1F9161D485ADE0029D18F /* OBABookmarksInterfaceController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

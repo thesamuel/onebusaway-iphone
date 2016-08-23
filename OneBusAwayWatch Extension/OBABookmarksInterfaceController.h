@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, OBAWatchResponseType) {
     OBAWatchResponseTypeCurrentMap,
 };
 
-@interface InterfaceController : WKInterfaceController<WCSessionDelegate>
+@interface OBABookmarksInterfaceController : WKInterfaceController<WCSessionDelegate>
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *stopsTable;
 
 - (IBAction)nearbyPressed;

@@ -6,7 +6,7 @@
 //  Copyright © 2016 OneBusAway. All rights reserved.
 //
 
-#import "InterfaceController.h"
+#import "OBABookmarksInterfaceController.h"
 
 UIColor *OBAGreen = nil;
 NSString *const kNearbyMode = @"nearby";
@@ -25,7 +25,7 @@ NSString *const kBookmarksMode = @"bookmarks";
 #pragma mark - Life Cycles
 
 + (void)initialize {
-    if (self == [InterfaceController class]) {
+    if (self == [OBABookmarksInterfaceController class]) {
         if (!OBAGreen) {
             OBAGreen = [UIColor colorWithRed:0.47 green:0.67 blue:0.21 alpha:1.0];
         }
