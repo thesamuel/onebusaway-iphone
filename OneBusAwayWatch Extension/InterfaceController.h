@@ -26,17 +26,9 @@ typedef NS_ENUM(NSInteger, OBAWatchResponseType) {
 
 @interface InterfaceController : WKInterfaceController<WCSessionDelegate>
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *stopsTable;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceGroup *modeGroup;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *loadingLabel;
 
-// Nearby tab
 - (IBAction)nearbyPressed;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceGroup *nearbyGroup;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceImage *nearbyImage;
 
-// Bookmarks tab
 - (IBAction)bookmarksPressed;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceGroup *bookmarksGroup;
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceImage *bookmarksImage;
 
 @end

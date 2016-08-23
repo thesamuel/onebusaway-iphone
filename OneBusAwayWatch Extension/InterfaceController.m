@@ -107,7 +107,6 @@ NSString *const kBookmarksMode = @"bookmarks";
         //return; // TODO: remove this
     }
 
-    [self.loadingLabel setHidden:NO];
     [self.stopsTable setHidden:YES];
 
     if ([[WCSession defaultSession] isReachable]) {
@@ -134,7 +133,6 @@ NSString *const kBookmarksMode = @"bookmarks";
         return;
     }
 
-    [self.loadingLabel setHidden:NO];
     [self.stopsTable setHidden:YES];
 
     if ([[WCSession defaultSession] isReachable]) {
@@ -165,7 +163,6 @@ NSString *const kBookmarksMode = @"bookmarks";
         [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
         [controller.status setText:@"n/a"];
     }
-    [self.loadingLabel setHidden:YES];
     [self.stopsTable setHidden:NO];
 }
 
@@ -204,7 +201,6 @@ NSString *const kBookmarksMode = @"bookmarks";
             [controller.status setText:@"none upcoming"];
         }
     }
-    [self.loadingLabel setHidden:YES];
     [self.stopsTable setHidden:NO];
 }
 
