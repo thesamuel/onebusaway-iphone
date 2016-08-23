@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Xdl-vK-61A">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="10032"/>
     </dependencies>
     <scenes>
-        <!--Interface Controller-->
+        <!--Bookmarks-->
         <scene sceneID="eED-eN-ACW">
             <objects>
-                <controller id="Xdl-vK-61A">
+                <controller title="Bookmarks" id="Xdl-vK-61A">
                     <items>
                         <table alignment="left" id="bbJ-8o-aBw">
                             <items>
@@ -36,92 +36,48 @@
                                             </group>
                                         </items>
                                     </group>
-                                </tableRow>
-                            </items>
-                        </table>
-                    </items>
-                </controller>
-            </objects>
-            <point key="canvasLocation" x="500" y="258"/>
-        </scene>
-        <!--Interface Controller-->
-        <scene sceneID="aou-V4-d1y">
-            <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController">
-                    <items>
-                        <group width="1" height="0.25" alignment="left" id="OWB-tj-PiJ">
-                            <items>
-                                <button alignment="left" verticalAlignment="center" id="q5d-0C-oEP">
-                                    <group key="contentGroup" width="0.5" height="1" alignment="left" id="Fnn-rm-cT3">
-                                        <items>
-                                            <imageView width="25" height="25" alignment="center" verticalAlignment="center" image="Near Me Filled-50.png" id="9yM-oc-RF6"/>
-                                        </items>
-                                    </group>
                                     <connections>
-                                        <action selector="nearbyPressed" destination="AgC-eL-Hgc" id="1Bb-4E-y9b"/>
-                                    </connections>
-                                </button>
-                                <button alignment="right" verticalAlignment="center" id="h5j-7y-KTS">
-                                    <group key="contentGroup" width="0.5" height="1" alignment="left" id="0I3-MF-OnZ">
-                                        <items>
-                                            <imageView width="25" height="25" alignment="center" verticalAlignment="center" image="Bookmark Ribbon Filled-50.png" id="x1S-Js-g6o"/>
-                                        </items>
-                                    </group>
-                                    <connections>
-                                        <action selector="bookmarksPressed" destination="AgC-eL-Hgc" id="HqQ-vr-Yeh"/>
-                                    </connections>
-                                </button>
-                            </items>
-                            <color key="backgroundColor" red="0.46515971422195435" green="0.67239880561828613" blue="0.16945198178291321" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        </group>
-                        <label alignment="center" verticalAlignment="center" text="Loading..." id="A2z-LL-oAn"/>
-                        <table alignment="left" hidden="YES" id="rES-Pz-ffn">
-                            <items>
-                                <tableRow identifier="StopRow" id="9Gd-da-Lpy" customClass="OBARowController">
-                                    <group key="rootItem" width="1" height="0.0" alignment="left" id="4a1-Ka-DYj">
-                                        <items>
-                                            <label width="0.20000000000000001" height="1" alignment="left" text="E" textAlignment="center" minimumScaleFactor="0.69999999999999996" id="2IP-L2-YNG">
-                                                <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
-                                            </label>
-                                            <group width="0.80000000000000004" alignment="left" id="90b-mv-o9m">
-                                                <items>
-                                                    <separator height="1" alignment="left" id="6Iz-Yi-U6s"/>
-                                                    <group alignment="left" layout="vertical" id="u98-Xr-k37">
-                                                        <items>
-                                                            <label alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="QsU-vd-oEv">
-                                                                <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
-                                                            </label>
-                                                            <label alignment="left" verticalAlignment="bottom" text="31, 32, 65, 67..." id="BF3-VY-qvc">
-                                                                <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
-                                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
-                                                            </label>
-                                                        </items>
-                                                    </group>
-                                                </items>
-                                            </group>
-                                        </items>
-                                    </group>
-                                    <connections>
-                                        <outlet property="route" destination="2IP-L2-YNG" id="nEH-vb-5Ux"/>
-                                        <outlet property="status" destination="BF3-VY-qvc" id="U8r-er-XeB"/>
-                                        <outlet property="stop" destination="QsU-vd-oEv" id="rvK-U7-UJs"/>
+                                        <outlet property="route" destination="5lj-9b-XRU" id="8gE-si-Irr"/>
+                                        <outlet property="status" destination="rfb-rz-Zq1" id="efp-qb-VaN"/>
+                                        <outlet property="stop" destination="WJT-AQ-Ifa" id="c7g-mt-gBX"/>
                                     </connections>
                                 </tableRow>
                             </items>
                         </table>
                     </items>
                     <connections>
-                        <outlet property="bookmarksGroup" destination="0I3-MF-OnZ" id="rYu-BP-q39"/>
-                        <outlet property="bookmarksImage" destination="x1S-Js-g6o" id="oWC-xj-uiz"/>
-                        <outlet property="loadingLabel" destination="A2z-LL-oAn" id="yVh-e3-jV4"/>
-                        <outlet property="modeGroup" destination="OWB-tj-PiJ" id="DlD-1V-A2f"/>
-                        <outlet property="nearbyGroup" destination="Fnn-rm-cT3" id="gJJ-5T-dxO"/>
-                        <outlet property="nearbyImage" destination="9yM-oc-RF6" id="qcE-PX-Lki"/>
-                        <outlet property="stopsTable" destination="rES-Pz-ffn" id="BOT-Vp-9GE"/>
+                        <segue destination="4tR-TK-kgr" kind="relationship" relationship="nextPage" id="O4K-Jy-6b8"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="246" y="258"/>
+            <point key="canvasLocation" x="422" y="-134"/>
+        </scene>
+        <!--Nearby-->
+        <scene sceneID="Svd-Md-8jR">
+            <objects>
+                <controller title="Nearby" id="4tR-TK-kgr">
+                    <items>
+                        <table alignment="left" id="mej-Rh-24N">
+                            <items>
+                                <tableRow identifier="StopRow" id="RNJ-pv-YUz" customClass="OBARowController">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="0cj-Zp-7tS">
+                                        <items>
+                                            <label width="1" alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="JGB-CQ-TFX">
+                                                <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
+                                            </label>
+                                            <label alignment="left" verticalAlignment="bottom" text="15 minutes" id="VvK-dD-5ey">
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                            </label>
+                                        </items>
+                                    </group>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="719" y="-134"/>
         </scene>
     </scenes>
 </document>
