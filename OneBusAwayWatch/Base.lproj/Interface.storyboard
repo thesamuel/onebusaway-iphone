@@ -8,11 +8,11 @@
         <!--Bookmarks-->
         <scene sceneID="eED-eN-ACW">
             <objects>
-                <controller title="Bookmarks" id="Xdl-vK-61A">
+                <controller title="Bookmarks" id="Xdl-vK-61A" customClass="OBABookmarksInterfaceController">
                     <items>
                         <table alignment="left" id="bbJ-8o-aBw">
                             <items>
-                                <tableRow identifier="StopRow" id="Rin-BA-S6q" customClass="OBABookmarkRowController">
+                                <tableRow identifier="BookmarkStopRow" id="Rin-BA-S6q" customClass="OBABookmarkRowController">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" id="5JH-VS-AMN">
                                         <items>
                                             <label width="0.20000000000000001" height="1" alignment="left" text="49" textAlignment="center" minimumScaleFactor="0.69999999999999996" id="5lj-9b-XRU">
@@ -46,6 +46,7 @@
                         </table>
                     </items>
                     <connections>
+                        <outlet property="bookmarkStopsTable" destination="bbJ-8o-aBw" id="841-07-BSh"/>
                         <segue destination="4tR-TK-kgr" kind="relationship" relationship="nextPage" id="O4K-Jy-6b8"/>
                     </connections>
                 </controller>
@@ -55,26 +56,33 @@
         <!--Nearby-->
         <scene sceneID="Svd-Md-8jR">
             <objects>
-                <controller title="Nearby" id="4tR-TK-kgr">
+                <controller title="Nearby" id="4tR-TK-kgr" customClass="OBANearbyInterfaceController">
                     <items>
                         <table alignment="left" id="mej-Rh-24N">
                             <items>
-                                <tableRow identifier="StopRow" id="RNJ-pv-YUz" customClass="OBABookmarkRowController">
+                                <tableRow identifier="NearbyStopRow" id="RNJ-pv-YUz" customClass="OBANearbyRowController">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="0cj-Zp-7tS">
                                         <items>
                                             <label width="1" alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="JGB-CQ-TFX">
                                                 <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
                                             </label>
-                                            <label alignment="left" verticalAlignment="bottom" text="15 minutes" id="VvK-dD-5ey">
+                                            <label alignment="left" verticalAlignment="bottom" text="31, 32, 65, 67, 73" id="VvK-dD-5ey">
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                 <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
                                             </label>
                                         </items>
                                     </group>
+                                    <connections>
+                                        <outlet property="routes" destination="VvK-dD-5ey" id="BCP-wJ-YK3"/>
+                                        <outlet property="stop" destination="JGB-CQ-TFX" id="K2k-GI-ZXR"/>
+                                    </connections>
                                 </tableRow>
                             </items>
                         </table>
                     </items>
+                    <connections>
+                        <outlet property="nearbyStopsTable" destination="mej-Rh-24N" id="djZ-eO-N9Z"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="719" y="-134"/>

@@ -8,56 +8,31 @@
 
 #import "OBABookmarksInterfaceController.h"
 
-UIColor *OBAGreen = nil;
-NSString *const kNearbyMode = @"nearby";
-NSString *const kBookmarksMode = @"bookmarks";
+@interface OBABookmarksInterfaceController()
 
-@interface InterfaceController()
-
-@property (nonatomic) NSString *mode;
-@property (strong, nonatomic) NSDictionary *bookmarksMessage;
-@property (strong, nonatomic) NSDictionary *nearbyMessage;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *bookmarkStopsTable;
 
 @end
 
-@implementation InterfaceController
+@implementation OBABookmarksInterfaceController
 
-#pragma mark - Life Cycles
+#pragma mark - Life Cycle
 
-+ (void)initialize {
-    if (self == [OBABookmarksInterfaceController class]) {
-        if (!OBAGreen) {
-            OBAGreen = [UIColor colorWithRed:0.47 green:0.67 blue:0.21 alpha:1.0];
-        }
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [OBAConnectivityManager sharedInstance].bookmarksDelegate = self;
     }
+    return self;
 }
 
 - (void)awakeWithContext:(id)context {
     [super awakeWithContext:context];
-    
-    if ([WCSession isSupported]) {
-        WCSession* session = [WCSession defaultSession];
-        session.delegate = self;
-        [session activateSession];
-    }
-
-    [self setupUI];
-    self.mode = kNearbyMode;
-}
-
-- (void)setupUI {
-    [self.modeGroup setBackgroundColor:[UIColor clearColor]];
-    UIImage *nearbyPNG = [UIImage imageNamed:@"Near Me Filled-50.png"];
-    nearbyPNG = [nearbyPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    [self.nearbyImage setImage:nearbyPNG];
-
-    UIImage *bookmarksPNG = [UIImage imageNamed:@"Bookmark Ribbon Filled-50.png"];
-    bookmarksPNG = [bookmarksPNG imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    [self.bookmarksImage setImage:bookmarksPNG];
+    [[OBAConnectivityManager sharedInstance] requestBookmarks]; // TODO: add more calls
 }
 
 - (void)willActivate {
-    // This method is called when watch view controller is about to be visible to user
+    [[OBAConnectivityManager sharedInstance] requestBookmarks]; // TODO: add more calls
     [super willActivate];
 }
 
@@ -66,113 +41,21 @@ NSString *const kBookmarksMode = @"bookmarks";
     [super didDeactivate];
 }
 
-#pragma mark - Mode Switching Methods
-
-- (IBAction)nearbyPressed {
-    if (![self.mode isEqualToString:kNearbyMode]) {
-        self.mode = kNearbyMode;
-    }
-    [self requestNearby];
-}
-
-- (IBAction)bookmarksPressed {
-    if (![self.mode isEqualToString:kBookmarksMode]) {
-        self.mode = kBookmarksMode;
-    }
-    [self requestBookmarks];
-}
-
-- (void)setMode:(NSString *)mode {
-    BOOL nearbyMode = [mode isEqualToString:kNearbyMode];
-
-    // Begin updating rows
-    [self.stopsTable setNumberOfRows:0 withRowType:@"StopRow"];
-    (nearbyMode) ? [self requestNearby] : [self requestBookmarks];
-
-    // Update Switch
-    [self.nearbyImage setTintColor: (nearbyMode) ? [UIColor blackColor] : OBAGreen];
-    [self.nearbyGroup setBackgroundColor:(nearbyMode) ? OBAGreen : [UIColor clearColor]];
-    [self.bookmarksImage setTintColor:(nearbyMode) ? OBAGreen : [UIColor blackColor]];
-    [self.bookmarksGroup setBackgroundColor:(nearbyMode) ? [UIColor clearColor] : OBAGreen];
-
-    _mode = mode;
-}
-
 #pragma mark - Connectivity
 
-// TODO: add automatic re-loading.
-- (void)requestNearby {
-    if (self.nearbyMessage) {
-        [self updateNearbyWithMessage:self.nearbyMessage];
-        //return; // TODO: remove this
-    }
+//    if (self.bookmarksMessage) {
+//        [self updateBookmarksWithMessage:self.bookmarksMessage];
+//        return;
+//    }
+//    [self.bookmarkStopsTable setHidden:YES];
+//    self.bookmarksMessage = replyMessage;
 
-    [self.stopsTable setHidden:YES];
-
-    if ([[WCSession defaultSession] isReachable]) {
-        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeNearby)};
-        [[WCSession defaultSession] sendMessage:request
-                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       if ([self.mode isEqualToString:kNearbyMode]) {
-                                           self.nearbyMessage = replyMessage;
-                                           [self updateNearbyWithMessage:replyMessage];
-                                       }
-                                   }
-                                   errorHandler:^(NSError *error) {
-                                       // do something
-                                   }
-         ];
-    } else {
-        //phone unreachable
-    }
-}
-
-- (void)requestBookmarks {
-    if (self.bookmarksMessage) {
-        [self updateBookmarksWithMessage:self.bookmarksMessage];
-        return;
-    }
-
-    [self.stopsTable setHidden:YES];
-
-    if ([[WCSession defaultSession] isReachable]) {
-        NSDictionary *request = @{@"request_type":@(OBAWatchRequestTypeBookmarks)};
-        [[WCSession defaultSession] sendMessage:request
-                                   replyHandler:^(NSDictionary<NSString *, id> *replyMessage) {
-                                       if ([self.mode isEqualToString:kBookmarksMode]) {
-                                           self.bookmarksMessage = replyMessage;
-                                           [self updateBookmarksWithMessage:replyMessage];
-                                       }
-                                   }
-                                   errorHandler:^(NSError *error) {
-                                       // do something
-                                   }
-         ];
-    } else {
-        //phone unreachable
-    }
-}
-
-- (void)updateNearbyWithMessage:(NSDictionary *)message {
-    NSArray *nearbys = [message objectForKey:@"response"];
-    NSUInteger numberOfRows = nearbys.count;
-    [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
-    for (int i = 0; i < numberOfRows; i++) {
-        OBABookmarkRowController *controller = [self.stopsTable rowControllerAtIndex:i];
-        [controller.route setText:[nearbys[i] objectForKey:@"---"]];
-        [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
-        [controller.status setText:@"n/a"];
-    }
-    [self.stopsTable setHidden:NO];
-}
-
-// TODO: data is now sent as a package. update accordingly.
 - (void)updateBookmarksWithMessage:(NSDictionary *)message {
     NSArray *bookmarks = [message objectForKey:@"response"];
     NSUInteger numberOfRows = bookmarks.count;
-    [self.stopsTable setNumberOfRows:numberOfRows withRowType:@"StopRow"];
+    [self.bookmarkStopsTable setNumberOfRows:numberOfRows withRowType:@"BookmarkStopRow"];
     for (int i = 0; i < numberOfRows; i++) {
-        OBABookmarkRowController *controller = [self.stopsTable rowControllerAtIndex:i];
+        OBABookmarkRowController *controller = [self.bookmarkStopsTable rowControllerAtIndex:i];
         if ([bookmarks[i] objectForKey:@"bestAvailableName"]) {
             UIColor *departureStatusColor;
             switch ([[bookmarks[i] objectForKey:@"departureStatus"] intValue]) {
@@ -201,7 +84,6 @@ NSString *const kBookmarksMode = @"bookmarks";
             [controller.status setText:@"none upcoming"];
         }
     }
-    [self.stopsTable setHidden:NO];
 }
 
 @end
