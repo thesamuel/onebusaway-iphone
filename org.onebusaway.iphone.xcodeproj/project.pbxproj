@@ -16,6 +16,7 @@
 		617AD2E41D6047450043DE26 /* Near Me Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617AD2E11D6046C30043DE26 /* Near Me Filled-50.png */; };
 		619423551D6C5C9F002B2188 /* OBANearbyInterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 619423541D6C5C9F002B2188 /* OBANearbyInterfaceController.m */; };
 		619423581D6C5CB0002B2188 /* OBANearbyRowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 619423571D6C5CB0002B2188 /* OBANearbyRowController.m */; };
+		61AE97A01D6D7CE900DEAE99 /* CLLocation+OBABearing.m in Sources */ = {isa = PBXBuildFile; fileRef = 61AE979D1D6D7CB700DEAE99 /* CLLocation+OBABearing.m */; };
 		61CE2B601D5059FD00CDEC24 /* OBAWatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */; };
 		61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9051D485ADD0029D18F /* Interface.storyboard */; };
 		61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9081D485ADD0029D18F /* Assets.xcassets */; };
@@ -423,6 +424,8 @@
 		619423541D6C5C9F002B2188 /* OBANearbyInterfaceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBANearbyInterfaceController.m; sourceTree = "<group>"; };
 		619423561D6C5CB0002B2188 /* OBANearbyRowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBANearbyRowController.h; sourceTree = "<group>"; };
 		619423571D6C5CB0002B2188 /* OBANearbyRowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBANearbyRowController.m; sourceTree = "<group>"; };
+		61AE979C1D6D7CB700DEAE99 /* CLLocation+OBABearing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocation+OBABearing.h"; sourceTree = "<group>"; };
+		61AE979D1D6D7CB700DEAE99 /* CLLocation+OBABearing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocation+OBABearing.m"; sourceTree = "<group>"; };
 		61CE2B5E1D5059FD00CDEC24 /* OBAWatchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAWatchManager.h; sourceTree = "<group>"; };
 		61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAWatchManager.m; sourceTree = "<group>"; };
 		61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneBusAwayWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1070,6 +1073,8 @@
 		931C42BF160E4AE000435CD3 /* categories */ = {
 			isa = PBXGroup;
 			children = (
+				61AE979C1D6D7CB700DEAE99 /* CLLocation+OBABearing.h */,
+				61AE979D1D6D7CB700DEAE99 /* CLLocation+OBABearing.m */,
 				931C42C0160E4B2A00435CD3 /* MKMapView+oba_Additions.h */,
 				931C42C1160E4B2A00435CD3 /* MKMapView+oba_Additions.m */,
 				923FE67E176082A7009AFDE8 /* UITableViewController+oba_Additions.h */,
@@ -2281,6 +2286,7 @@
 				932076621C940519005F7D4A /* OBASegmentedRow.m in Sources */,
 				934446B51AB10E67005B3333 /* UINavigationController+oba_Additions.m in Sources */,
 				932BE4BF1AB66D5C0011F2FB /* OBAReportProblemWithStopViewController.m in Sources */,
+				61AE97A01D6D7CE900DEAE99 /* CLLocation+OBABearing.m in Sources */,
 				932BE4CE1AB66D710011F2FB /* OBAReportProblemWithTripViewController.m in Sources */,
 				932BE4FB1AB66EDD0011F2FB /* OBAVehicleDetailsController.m in Sources */,
 				936D2EED1C7A3BAB0060B7E1 /* OBATableViewCell.m in Sources */,
