@@ -9,6 +9,7 @@
 #import "OBAWatchManager.h"
 #import "OBAKit.h"
 #import "OBASearchController.h"
+#import "CLLocation+OBABearing.h"
 
 static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
 static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
@@ -97,6 +98,8 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
             [stopDictionary setObject:stop.routeNamesAsString forKey:@"routes"]; // TODO: receive by watch
             CLLocationDistance distanceFromCurrentLocation = [stop.location distanceFromLocation:self.lastLocation];
             [stopDictionary setObject:[NSNumber numberWithDouble:distanceFromCurrentLocation] forKey:@"distance"];
+            CLLocationBearing bearing = [self.lastLocation bearingToLocation:stop.location];
+            [stopDictionary setObject:NSLocalizedStringFromBearing(bearing) forKey:@"bearing"];
             if (stop.direction) {
                 [stopDictionary setObject:stop.direction forKey:@"stopDirection"];
             }

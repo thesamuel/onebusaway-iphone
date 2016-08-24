@@ -35,6 +35,7 @@
                                                 </items>
                                             </group>
                                         </items>
+                                        <edgeInsets key="margins" left="6" right="6" top="6" bottom="6"/>
                                     </group>
                                     <connections>
                                         <outlet property="route" destination="5lj-9b-XRU" id="8gE-si-Irr"/>
@@ -63,6 +64,18 @@
                                 <tableRow identifier="NearbyStopRow" id="RNJ-pv-YUz" customClass="OBANearbyRowController">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="0cj-Zp-7tS">
                                         <items>
+                                            <group width="1" alignment="left" id="r1W-14-g9P">
+                                                <items>
+                                                    <label alignment="left" text="E" id="KDD-6u-WVN">
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                        <fontDescription key="font" type="system" weight="heavy" pointSize="11"/>
+                                                    </label>
+                                                    <label alignment="left" text="2 miles away" id="lUj-Hu-hge">
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                        <fontDescription key="font" type="system" pointSize="11"/>
+                                                    </label>
+                                                </items>
+                                            </group>
                                             <label width="1" alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="JGB-CQ-TFX">
                                                 <fontDescription key="font" style="UICTFontTextStyleSubhead"/>
                                             </label>
@@ -71,8 +84,11 @@
                                                 <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
                                             </label>
                                         </items>
+                                        <edgeInsets key="margins" left="6" right="6" top="6" bottom="6"/>
                                     </group>
                                     <connections>
+                                        <outlet property="bearing" destination="KDD-6u-WVN" id="v8g-FI-TMc"/>
+                                        <outlet property="distance" destination="lUj-Hu-hge" id="e74-zW-0zE"/>
                                         <outlet property="routes" destination="VvK-dD-5ey" id="BCP-wJ-YK3"/>
                                         <outlet property="stop" destination="JGB-CQ-TFX" id="K2k-GI-ZXR"/>
                                     </connections>

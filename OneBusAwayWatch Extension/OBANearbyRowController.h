@@ -13,5 +13,7 @@
 
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *stop;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *routes;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *distance;
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *bearing;
 
 @end
