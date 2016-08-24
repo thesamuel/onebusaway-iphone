@@ -11,6 +11,7 @@
 @interface OBABookmarksInterfaceController()
 
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceTable *bookmarkStopsTable;
+@property (strong, nonatomic) NSArray *savedBookmarks;
 
 @end
 
@@ -52,29 +53,19 @@
 
 - (void)updateBookmarksWithMessage:(NSDictionary *)message {
     NSArray *bookmarks = [message objectForKey:@"response"];
+    if ([self.savedBookmarks isEqualToArray:bookmarks]) {
+        return;
+    }
     NSUInteger numberOfRows = bookmarks.count;
     [self.bookmarkStopsTable setNumberOfRows:numberOfRows withRowType:@"BookmarkStopRow"];
     for (int i = 0; i < numberOfRows; i++) {
         OBABookmarkRowController *controller = [self.bookmarkStopsTable rowControllerAtIndex:i];
         if ([bookmarks[i] objectForKey:@"bestAvailableName"]) {
-            UIColor *departureStatusColor;
-            switch ([[bookmarks[i] objectForKey:@"departureStatus"] intValue]) {
-                case 1: // early
-                    departureStatusColor = [UIColor greenColor];
-                    break;
-                case 2: // on time
-                    departureStatusColor = [UIColor whiteColor];
-                    break;
-                case 3: // delayed
-                    departureStatusColor = [UIColor blueColor];
-                    break;
-                default:
-                    break;
-            }
             [controller.route setText:[bookmarks[i] objectForKey:@"bestAvailableName"]];
             [controller.stop setText:[bookmarks[i] objectForKey:@"name"]];
             NSString *departureString = [NSString stringWithFormat:@"in %@ minutes", [bookmarks[i] objectForKey:@"minutesUntilBestDeparture"]];
             [controller.status setText:departureString];
+            UIColor *departureStatusColor = [self colorForBookmark:bookmarks[i]];
             if (departureStatusColor) {
                 [controller.route setTextColor:departureStatusColor];
             }
@@ -84,6 +75,21 @@
             [controller.status setText:@"none upcoming"];
         }
     }
+    self.savedBookmarks = bookmarks;
+}
+
+- (UIColor *)colorForBookmark:(NSDictionary *)bookmark {
+    switch ([[bookmark objectForKey:@"departureStatus"] intValue]) {
+        case 1: // early
+            return [UIColor greenColor];
+        case 2: // on time
+            return [UIColor whiteColor];
+        case 3: // delayed
+            return [UIColor blueColor];
+        default:
+            break;
+    }
+    return nil;
 }
 
 @end
