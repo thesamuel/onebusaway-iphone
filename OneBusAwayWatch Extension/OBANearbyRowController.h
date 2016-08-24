@@ -11,7 +11,7 @@
 
 @interface OBANearbyRowController : NSObject
 
-@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *stop;
+@property (strong, nonatomic) NSString *name;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *routes;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *distance;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *bearing;

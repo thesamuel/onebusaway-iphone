@@ -17,6 +17,7 @@
 		619423551D6C5C9F002B2188 /* OBANearbyInterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 619423541D6C5C9F002B2188 /* OBANearbyInterfaceController.m */; };
 		619423581D6C5CB0002B2188 /* OBANearbyRowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 619423571D6C5CB0002B2188 /* OBANearbyRowController.m */; };
 		61AE97A01D6D7CE900DEAE99 /* CLLocation+OBABearing.m in Sources */ = {isa = PBXBuildFile; fileRef = 61AE979D1D6D7CB700DEAE99 /* CLLocation+OBABearing.m */; };
+		61AE97A71D6D96F900DEAE99 /* OBAStopInterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61AE97A61D6D96F900DEAE99 /* OBAStopInterfaceController.m */; };
 		61CE2B601D5059FD00CDEC24 /* OBAWatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */; };
 		61D1F9071D485ADD0029D18F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9051D485ADD0029D18F /* Interface.storyboard */; };
 		61D1F9091D485ADD0029D18F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61D1F9081D485ADD0029D18F /* Assets.xcassets */; };
@@ -426,6 +427,8 @@
 		619423571D6C5CB0002B2188 /* OBANearbyRowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBANearbyRowController.m; sourceTree = "<group>"; };
 		61AE979C1D6D7CB700DEAE99 /* CLLocation+OBABearing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocation+OBABearing.h"; sourceTree = "<group>"; };
 		61AE979D1D6D7CB700DEAE99 /* CLLocation+OBABearing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocation+OBABearing.m"; sourceTree = "<group>"; };
+		61AE97A51D6D96F900DEAE99 /* OBAStopInterfaceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAStopInterfaceController.h; sourceTree = "<group>"; };
+		61AE97A61D6D96F900DEAE99 /* OBAStopInterfaceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAStopInterfaceController.m; sourceTree = "<group>"; };
 		61CE2B5E1D5059FD00CDEC24 /* OBAWatchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBAWatchManager.h; sourceTree = "<group>"; };
 		61CE2B5F1D5059FD00CDEC24 /* OBAWatchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBAWatchManager.m; sourceTree = "<group>"; };
 		61D1F9031D485ADD0029D18F /* OneBusAwayWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneBusAwayWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1026,6 +1029,8 @@
 				619423541D6C5C9F002B2188 /* OBANearbyInterfaceController.m */,
 				619423561D6C5CB0002B2188 /* OBANearbyRowController.h */,
 				619423571D6C5CB0002B2188 /* OBANearbyRowController.m */,
+				61AE97A51D6D96F900DEAE99 /* OBAStopInterfaceController.h */,
+				61AE97A61D6D96F900DEAE99 /* OBAStopInterfaceController.m */,
 				61D1F9171D485ADE0029D18F /* ExtensionDelegate.h */,
 				61D1F9181D485ADE0029D18F /* ExtensionDelegate.m */,
 				61D1F91A1D485ADE0029D18F /* Assets.xcassets */,
@@ -2350,6 +2355,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61AE97A71D6D96F900DEAE99 /* OBAStopInterfaceController.m in Sources */,
 				61D1F9191D485ADE0029D18F /* ExtensionDelegate.m in Sources */,
 				619423551D6C5C9F002B2188 /* OBANearbyInterfaceController.m in Sources */,
 				619423581D6C5CB0002B2188 /* OBANearbyRowController.m in Sources */,

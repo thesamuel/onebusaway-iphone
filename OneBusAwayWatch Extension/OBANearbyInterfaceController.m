@@ -46,13 +46,19 @@
     [self.nearbyStopsTable setNumberOfRows:numberOfRows withRowType:@"NearbyStopRow"];
     for (int i = 0; i < numberOfRows; i++) {
         OBANearbyRowController *controller = [self.nearbyStopsTable rowControllerAtIndex:i];
-        [controller.stop setText:[nearbys[i] objectForKey:@"name"]];
+        controller.name = [nearbys[i] objectForKey:@"name"];
         [controller.routes setText:[nearbys[i] objectForKey:@"routes"]];
         MKDistanceFormatter *distanceFormatter = [MKDistanceFormatter new];
         NSString *distanceString = [distanceFormatter stringFromDistance:[[nearbys[i] objectForKey:@"distance"] doubleValue]];
         [controller.distance setText:[NSString stringWithFormat:@"%@ away", distanceString]];
         [controller.bearing setText:[nearbys[i] objectForKey:@"bearing"]];
     }
+}
+
+- (void)table:(WKInterfaceTable *)table didSelectRowAtIndex:(NSInteger)rowIndex {
+    OBANearbyRowController *rowController = [self.nearbyStopsTable rowControllerAtIndex:rowIndex];
+    NSDictionary *context = @{@"name":rowController.name};
+    [self presentControllerWithName:@"StopInterfaceController" context:context];
 }
 
 @end

@@ -8,6 +8,15 @@
 
 #import "OBANearbyRowController.h"
 
+@interface OBANearbyRowController ()
+@property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *stop;
+@end
+
 @implementation OBANearbyRowController
+
+- (void)setName:(NSString *)name {
+    [self.stop setText:name];
+    _name = name;
+}
 
 @end
