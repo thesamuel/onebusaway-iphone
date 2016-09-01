@@ -127,17 +127,7 @@ static double const kOBANearbyRadiusInMeters = 1000; // 1 kilometer
     return stopsArray;
 }
 
-//- (NSArray *)sortStopsByDistance:(NSArray *)stops {
-////    return [stops sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-////        OBAStopV2 *stop1 = obj1, *stop2 = obj2;
-////        CLLocationDistance d1 = [stop1.location distanceFromLocation:self.lastLocation];
-////        CLLocationDistance d2 = [stop2.location distanceFromLocation:self.lastLocation];
-////        return d1 < d2 ? NSOrderedAscending : d1 > d2 ? NSOrderedDescending : NSOrderedSame;
-////    }];
-//}
-
 #pragma mark - Bookmark Methods
-// TODO: figure out semaphores
 - (NSArray *)bookmarks {
     OBAModelDAO *modelDAO = [OBAApplication sharedApplication].modelDao;
     NSMutableArray *allBookmarks = [NSMutableArray new];
