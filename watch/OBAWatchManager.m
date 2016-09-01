@@ -10,9 +10,10 @@
 #import "OBAKit.h"
 #import "OBASearchController.h"
 #import "CLLocation+OBABearing.h"
+#import "OBALocationModel.h"
 
 static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
-static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
+static double const kOBANearbyRadiusInMeters = 1000; // 1 kilometer
 
 @interface OBAWatchManager ()
 
@@ -67,8 +68,8 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
     if (self.lastLocation) {
         //double radius = MAX(location.horizontalAccuracy, OBAMinMapRadiusInMeters);
         self.region = [OBASphericalGeometryLibrary createRegionWithCenter:self.lastLocation.coordinate
-                                                           latRadius:kOBANearbyRadiusInMeters
-                                                           lonRadius:kOBANearbyRadiusInMeters];
+                                                                latRadius:kOBANearbyRadiusInMeters
+                                                                lonRadius:kOBANearbyRadiusInMeters];
     }
 }
 
@@ -86,6 +87,7 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
     return stops;
 }
 
+// TODO: send modelsq
 - (NSArray *)arrayOfNearbyStopsWithJson:(OBAListWithRangeAndReferencesV2 *)list {
     //OBASearchResult *result = [OBASearchResult resultFromList:list];
 //    NSArray *sortedList = [self sortStopsByDistance:list.values];
@@ -95,7 +97,7 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
             NSMutableDictionary *stopDictionary = [NSMutableDictionary new];
             [stopDictionary setObject:stop.name forKey:@"stopName"];
             [stopDictionary setObject:stop.code forKey:@"stopId"];
-            [stopDictionary setObject:stop.routeNamesAsString forKey:@"routes"]; // TODO: receive by watch
+            [stopDictionary setObject:stop.routeNamesAsString forKey:@"routes"];
             CLLocationDistance distanceFromCurrentLocation = [stop.location distanceFromLocation:self.lastLocation];
             [stopDictionary setObject:[NSNumber numberWithDouble:distanceFromCurrentLocation] forKey:@"distance"];
             CLLocationBearing bearing = [self.lastLocation bearingToLocation:stop.location];
@@ -105,6 +107,15 @@ static double const kOBANearbyRadiusInMeters = 2000; // 2 kilometers
             }
             NSString *name = (stop.direction) ? [NSString stringWithFormat:@"%@ [%@]", stop.name, stop.direction] : stop.name;
             [stopDictionary setObject:name forKey:@"name"];
+
+            // Create region NSData
+            MKCoordinateRegion region = [OBASphericalGeometryLibrary createRegionWithCenter:stop.coordinate
+                                                                                  latRadius:kOBANearbyRadiusInMeters
+                                                                                  lonRadius:kOBANearbyRadiusInMeters];
+            NSData *regionData = [NSData dataWithBytes:&region length:sizeof(region)];
+            [stopDictionary setObject:regionData forKey:@"region"];
+
+            // Add stop to the array
             [stopsArray addObject:stopDictionary];
         }
     }
