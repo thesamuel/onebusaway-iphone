@@ -55,10 +55,10 @@
             </objects>
             <point key="canvasLocation" x="422" y="-134"/>
         </scene>
-        <!--StopInterfaceController-->
+        <!--Close-->
         <scene sceneID="ksv-QY-iYo">
             <objects>
-                <controller identifier="StopInterfaceController" id="4wC-O0-J5J" customClass="OBAStopInterfaceController">
+                <controller identifier="StopInterfaceController" title="Close" id="4wC-O0-J5J" customClass="OBAStopInterfaceController">
                     <items>
                         <label alignment="left" text="NE Campus Pkwy &amp; Brooklyn Ave NE - Bay 1 [E]" numberOfLines="0" id="ywa-A5-qxA">
                             <fontDescription key="font" type="system" pointSize="14"/>
