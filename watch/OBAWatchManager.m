@@ -10,7 +10,6 @@
 #import "OBAKit.h"
 #import "OBASearchController.h"
 #import "CLLocation+OBABearing.h"
-#import "OBALocationModel.h"
 
 static NSUInteger const kOBAWatchBookmarkMinutesAfter = 120;
 static double const kOBANearbyRadiusInMeters = 1000; // 1 kilometer
