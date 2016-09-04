@@ -36,9 +36,6 @@
 #import "NSArray+OBAAdditions.h"
 #import <Apptentive/Apptentive.h>
 
-#import "OBABookmarkGroup.h"
-#import "OBAArrivalAndDepartureV2.h"
-
 #import "OBAWatchManager.h"
 
 static NSString *kOBASelectedTabIndexDefaultsKey = @"OBASelectedTabIndexDefaultsKey";
