@@ -52,13 +52,16 @@
         NSString *distanceString = [distanceFormatter stringFromDistance:[[nearbys[i] objectForKey:@"distance"] doubleValue]];
         [controller.distance setText:[NSString stringWithFormat:@"%@ away", distanceString]];
         [controller.bearing setText:[nearbys[i] objectForKey:@"bearing"]];
+        MKCoordinateRegion region;
+        [[nearbys[i] objectForKey:@"region"] getBytes:&region length:sizeof(region)];
+        controller.region = region;
     }
 }
 
 - (void)table:(WKInterfaceTable *)table didSelectRowAtIndex:(NSInteger)rowIndex {
     OBANearbyRowController *rowController = [self.nearbyStopsTable rowControllerAtIndex:rowIndex];
-    NSDictionary *context = @{@"name":rowController.name};
-    [self presentControllerWithName:@"StopInterfaceController" context:context];
+    //NSDictionary *context = @{@"name":rowController.name, @"region":rowController.region};
+    [self presentControllerWithName:@"StopInterfaceController" context:rowController];
 }
 
 @end

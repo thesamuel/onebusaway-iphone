@@ -7,6 +7,7 @@
 //
 
 #import "OBAStopInterfaceController.h"
+#import "OBANearbyRowController.h"
 
 @interface OBAStopInterfaceController ()
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *name;
@@ -18,7 +19,12 @@
 
 - (void)awakeWithContext:(id)context {
     [super awakeWithContext:context];
-    [self.name setText:[context objectForKey:@"name"]];
+    OBANearbyRowController *rowController = (OBANearbyRowController *)context;
+    [self.name setText:rowController.name];
+
+    CLLocationCoordinate2D mapLocation = CLLocationCoordinate2DMake(37, -122);
+    MKCoordinateSpan coordinateSpan = MKCoordinateSpanMake(1, 1);
+    [self.map setRegion:MKCoordinateRegionMake(mapLocation, coordinateSpan)];
 }
 
 @end

@@ -14,6 +14,8 @@
 
 @implementation OBANearbyRowController
 
+// TODO: create an object to hold this information
+
 - (void)setName:(NSString *)name {
     [self.stop setText:name];
     _name = name;

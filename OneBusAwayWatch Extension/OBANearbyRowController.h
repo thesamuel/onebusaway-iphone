@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 @import WatchKit;
+@import MapKit;
 
 @interface OBANearbyRowController : NSObject
 
 @property (strong, nonatomic) NSString *name;
+@property (nonatomic) MKCoordinateRegion region;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *routes;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *distance;
 @property (unsafe_unretained, nonatomic) IBOutlet WKInterfaceLabel *bearing;
