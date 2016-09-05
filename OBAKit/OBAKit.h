@@ -16,11 +16,9 @@ FOUNDATION_EXPORT const unsigned char OBAKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <OBAKit/PublicHeader.h>
 
-
 #import <OBAKit/OBACommon.h>
 #import <OBAKit/OBACommonV1.h>
 #import <OBAKit/OBADateHelpers.h>
-#import <OBAKit/OBALogger.h>
 #import <OBAKit/OBAMacros.h>
 #import <OBAKit/OBAStopIconFactory.h>
 #import <OBAKit/OBAURLHelpers.h>
@@ -96,3 +94,9 @@ FOUNDATION_EXPORT const unsigned char OBAKitVersionString[];
 #import <OBAKit/NSArray+OBAAdditions.h>
 #import <OBAKit/NSObject+OBADescription.h>
 #import <OBAKit/OBAEmailHelper.h>
+#import <OBAKit/OBAUser.h>
+#import <OBAKit/OBAReachability.h>
+#import <OBAKit/OBARouteFilter.h>
+#import <OBAKit/OBARegionHelper.h>
+#import <OBAKit/OBAStrings.h>
+#import <OBAKit/OBATheme.h>

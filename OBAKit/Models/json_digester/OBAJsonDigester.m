@@ -20,8 +20,6 @@
 #import "OBASetPropertyJsonDigesterRule.h"
 #import "OBASetNextOBAJsonDigesterRule.h"
 #import "OBASelectorJsonDigesterRule.h"
-#import "OBALogger.h"
-
 
 #pragma mark OBAJsonDigesterContextImpl Interface
 
@@ -134,15 +132,21 @@
     return (err != nil);
 }
 
--(NSString*) extendPrefix:(NSString*)prefix withValue:(NSString*)value {
-    if( [prefix length] == 0)
+- (NSString*)extendPrefix:(NSString*)prefix withValue:(NSString*)value {
+    if (prefix.length == 0) {
         return value;
-    if( [value length] == 0)
+    }
+
+    if (value.length == 0) {
         return prefix;
-    if( [prefix characterAtIndex:([prefix length]-1)] == '/' )
+    }
+
+    if ([prefix hasSuffix:@"/"]) {
         return [NSString stringWithFormat:@"%@%@",prefix,value];
-    else
+    }
+    else {
         return [NSString stringWithFormat:@"%@/%@",prefix,value];
+    }
 }
 
 @end
@@ -157,7 +161,7 @@
     NSString * fullName = [self extendPrefix:prefix withValue:name];
     
     if( _verbose )
-        OBALogDebug(@"path=%@",fullName);
+        NSLog(@"path=%@",fullName);
     
     NSArray * rules = _rulesByPrefix[fullName];
     

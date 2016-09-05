@@ -1,13 +1,13 @@
 #import "OBAReportProblemWithTripViewController.h"
 #import "OBALabelAndSwitchTableViewCell.h"
 #import "OBALabelAndTextFieldTableViewCell.h"
-#import "OBALogger.h"
 #import "UITableViewController+oba_Additions.h"
 #import "UITableViewCell+oba_Additions.h"
 #import "OBAAnalytics.h"
 #import "OBAApplicationDelegate.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "OBAArrivalAndDepartureViewController.h"
+#import <OBAKit/OBAKit.h>
 
 typedef NS_ENUM (NSInteger, OBASectionType) {
     OBASectionTypeNone,
@@ -90,7 +90,7 @@ typedef NS_ENUM (NSInteger, OBASectionType) {
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
 
-    view.backgroundColor = OBAGREENBACKGROUND;
+    view.backgroundColor = [OBATheme OBAGreenBackground];
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(15, 5, 290, 30)];
     title.font = [OBATheme bodyFont];
     title.backgroundColor = [UIColor clearColor];
@@ -419,7 +419,7 @@ typedef NS_ENUM (NSInteger, OBASectionType) {
                                                                        message:NSLocalizedString(@"The problem was sucessfully reported. Thank you!", @"view.message")
                                                                 preferredStyle:UIAlertControllerStyleAlert];
 
-        [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [alert addAction:[UIAlertAction actionWithTitle:OBAStrings.dismiss style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             //go back to view that initiated report
             NSArray *allViewControllers = self.navigationController.viewControllers;
             for (UIViewController* vc in allViewControllers.reverseObjectEnumerator) {
@@ -435,7 +435,7 @@ typedef NS_ENUM (NSInteger, OBASectionType) {
 
 - (void)showErrorAlert {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error Submitting", @"view.title") message:NSLocalizedString(@"An error occurred while reporting the problem. Please contact us directly.", @"view.message") preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", @"view addButtonWithTitle") style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:OBAStrings.dismiss style:UIAlertActionStyleCancel handler:nil]];
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Contact Us", @"view addButtonWithTitle") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         [APP_DELEGATE navigateToTarget:[OBANavigationTarget target:OBANavigationTargetTypeContactUs]];
     }]];

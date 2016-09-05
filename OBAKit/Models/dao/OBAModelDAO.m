@@ -15,7 +15,6 @@
  */
 
 #import "OBAModelDAO.h"
-#import "OBALogger.h"
 #import "OBACommon.h"
 #import "OBACommonV1.h"
 #import "OBAMacros.h"
@@ -25,22 +24,26 @@
 #import "OBAPlacemark.h"
 #import "OBABookmarkGroup.h"
 
+NSString * const OBAUngroupedBookmarksIdentifier = @"OBAUngroupedBookmarksIdentifier";
+NSString * const OBAMostRecentStopsChangedNotification = @"OBAMostRecentStopsChangedNotification";
 const NSInteger kMaxEntriesInMostRecentList = 10;
 
 @interface OBAModelDAO ()
 @property(nonatomic,strong) id<OBAModelPersistenceLayer> preferencesDao;
+@property(nonatomic,strong,readwrite) NSMutableArray<OBABookmarkV2*> *bookmarks;
+@property(nonatomic,strong,readwrite) NSMutableArray<OBABookmarkGroup*> *bookmarkGroups;
+@property(nonatomic,strong,readwrite) NSMutableArray *mostRecentStops;
+@property(nonatomic,strong,readwrite) NSMutableDictionary *stopPreferences;
+@property(nonatomic,strong) NSMutableSet *visitedSituationIds;
 @end
 
-@implementation OBAModelDAO {
-    NSMutableArray * _bookmarks;
-    NSMutableArray * _bookmarkGroups;
-    NSMutableArray * _mostRecentStops;
-    NSMutableDictionary * _stopPreferences;
-    CLLocation * _mostRecentLocation;
-    NSMutableSet * _visitedSituationIds;
-    NSMutableArray * _mostRecentCustomApiUrls;
-}
+@implementation OBAModelDAO
 @dynamic hideFutureLocationWarnings;
+@dynamic ungroupedBookmarksOpen;
+@dynamic automaticallySelectRegion;
+
+// i feel like i must be missing something dumb. this shouldn't be required.
+@synthesize currentRegion = _currentRegion;
 
 - (instancetype)initWithModelPersistenceLayer:(id<OBAModelPersistenceLayer>)persistenceLayer {
     self = [super init];
@@ -53,58 +56,65 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
         _stopPreferences = [[NSMutableDictionary alloc] initWithDictionary:[_preferencesDao readStopPreferences]];
         _mostRecentLocation = [_preferencesDao readMostRecentLocation];
         _visitedSituationIds = [[NSMutableSet alloc] initWithSet:[_preferencesDao readVisistedSituationIds]];
-        _region = [_preferencesDao readOBARegion];
-        _mostRecentCustomApiUrls = [[NSMutableArray alloc] initWithArray:[_preferencesDao readMostRecentCustomApiUrls]];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewedArrivalsAndDeparturesForStop:) name:OBAViewedArrivalsAndDeparturesForStopNotification object:nil];
     }
 
     return self;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:OBAViewedArrivalsAndDeparturesForStopNotification object:nil];
-}
-
 #pragma mark - Recent
 
-- (NSArray*) mostRecentStops {
-    return _mostRecentStops;
-}
-
-- (NSArray*) mostRecentCustomApiUrls {
-    return _mostRecentCustomApiUrls;
-}
-
-- (CLLocation*) mostRecentLocation {
-    return _mostRecentLocation;
-}
-
-- (void) setMostRecentLocation:(CLLocation*)location {
-    _mostRecentLocation = location;
-    [_preferencesDao writeMostRecentLocation:location];
+- (void)setMostRecentLocation:(CLLocation*)location {
+    _mostRecentLocation = [location copy];
+    [_preferencesDao writeMostRecentLocation:_mostRecentLocation];
 }
 
 #pragma mark - Regions
 
-- (void)setRegion:(OBARegionV2 *)region {
-    if (_region == region) {
-        return;
-    }
-
-    _region = region;
-    [_preferencesDao writeOBARegion:region];
+- (void)setCurrentRegion:(OBARegionV2 *)currentRegion {
+    _currentRegion = currentRegion;
+    [_preferencesDao writeOBARegion:currentRegion];
 }
 
-- (BOOL) readSetRegionAutomatically {
+- (OBARegionV2*)currentRegion {
+    if (!_currentRegion) {
+        _currentRegion = [_preferencesDao readOBARegion];
+    }
+    return _currentRegion;
+}
+
+- (BOOL)automaticallySelectRegion {
     return [_preferencesDao readSetRegionAutomatically];
 }
 
-- (void) writeSetRegionAutomatically:(BOOL)setRegionAutomatically {
-    [_preferencesDao writeSetRegionAutomatically:setRegionAutomatically];
+- (void)setAutomaticallySelectRegion:(BOOL)automaticallySelectRegion {
+    [_preferencesDao writeSetRegionAutomatically:automaticallySelectRegion];
+}
+
+- (NSArray*)customRegions {
+    NSSet *regions = [_preferencesDao customRegions];
+    NSArray *sortedRegions = [regions.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    return sortedRegions;
+}
+
+- (void)addCustomRegion:(OBARegionV2*)region {
+    [_preferencesDao addCustomRegion:region];
+}
+
+- (void)removeCustomRegion:(OBARegionV2*)region {
+    [_preferencesDao removeCustomRegion:region];
 }
 
 #pragma mark - Bookmarks
+
+- (NSArray<OBABookmarkV2*>*)bookmarksMatchingPredicate:(NSPredicate*)predicate {
+    OBAGuard(predicate) else {
+        return @[];
+    }
+
+    NSArray<OBABookmarkV2*> *allBookmarks = [self allBookmarks];
+
+    return [allBookmarks filteredArrayUsingPredicate:predicate];
+}
 
 - (OBABookmarkV2*)bookmarkForArrivalAndDeparture:(OBAArrivalAndDepartureV2*)arrival {
     for (OBABookmarkV2 *bm in self.ungroupedBookmarks) {
@@ -124,16 +134,6 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
     return nil;
 }
 
-- (nullable OBABookmarkV2*)bookmarkAtIndex:(NSUInteger)index inGroup:(nullable OBABookmarkGroup*)group {
-    NSArray *bookmarks = group ? group.bookmarks : self.ungroupedBookmarks;
-
-    OBAGuard(bookmarks.count > index) else {
-        return nil;
-    }
-
-    return bookmarks[index];
-}
-
 - (NSArray*)ungroupedBookmarks {
     return _bookmarks;
 }
@@ -147,11 +147,11 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
 }
 
 - (NSArray*)bookmarksForCurrentRegion {
-    if (!self.region) {
+    if (!self.currentRegion) {
         return @[];
     }
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", NSStringFromSelector(@selector(regionIdentifier)), @[@(self.region.identifier)]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", NSStringFromSelector(@selector(regionIdentifier)), @[@(self.currentRegion.identifier)]];
     return [self.allBookmarks filteredArrayUsingPredicate:predicate];
 }
 
@@ -207,7 +207,7 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
             [_bookmarkGroups removeObject:group];
         }
 
-        [_preferencesDao writeBookmarkGroups:_bookmarkGroups];
+        [self persistGroups];
     }
     else {
         [_bookmarks removeObject:bookmark];
@@ -215,24 +215,20 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
     }
 }
 
-- (void)saveBookmarkGroup:(OBABookmarkGroup *)bookmarkGroup {
-    if (![_bookmarkGroups containsObject:bookmarkGroup]) {
-        [_bookmarkGroups addObject:bookmarkGroup];
-    }
-    [_bookmarkGroups sortUsingComparator:^NSComparisonResult(OBABookmarkGroup *obj1, OBABookmarkGroup *obj2) {
-        return [obj1.name compare:obj2.name];
-    }];
+- (void)persistGroups {
     [_preferencesDao writeBookmarkGroups:_bookmarkGroups];
 }
 
-- (void)removeBookmarkGroup:(OBABookmarkGroup *)bookmarkGroup {
-    for (OBABookmarkV2 *bm in bookmarkGroup.bookmarks) {
-        [_bookmarks addObject:bm];
-        bm.group = nil;
+#pragma mark - Bookmarks in Groups
+
+- (nullable OBABookmarkV2*)bookmarkAtIndex:(NSUInteger)index inGroup:(nullable OBABookmarkGroup*)group {
+    NSArray *bookmarks = group ? group.bookmarks : self.ungroupedBookmarks;
+
+    OBAGuard(bookmarks.count > index) else {
+        return nil;
     }
-    [_bookmarkGroups removeObject:bookmarkGroup];
-    [_preferencesDao writeBookmarks:_bookmarks];
-    [_preferencesDao writeBookmarkGroups:_bookmarkGroups];
+
+    return bookmarks[index];
 }
 
 - (void)moveBookmark:(OBABookmarkV2*)bookmark toGroup:(nullable OBABookmarkGroup*)group {
@@ -252,7 +248,7 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
     }
     bookmark.group = group;
     [_preferencesDao writeBookmarks:_bookmarks];
-    [_preferencesDao writeBookmarkGroups:_bookmarkGroups];
+    [self persistGroups];
 }
 
 - (void)moveBookmark:(NSUInteger)startIndex to:(NSUInteger)endIndex inGroup:(OBABookmarkGroup*)group {
@@ -274,7 +270,7 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
         // just stick the bookmark at the end of the array and
         // call it a day.
         [group.bookmarks insertObject:bm atIndex:MIN(endIndex, bookmarksCount - 1)];
-        [_preferencesDao writeBookmarkGroups:_bookmarkGroups];
+        [self persistGroups];
     }
 }
 
@@ -293,6 +289,83 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
         NSUInteger idx = [self.ungroupedBookmarks indexOfObject:bookmark];
         [self moveBookmark:idx to:index];
     }
+}
+
+#pragma mark - Bookmark Groups
+
+- (void)moveBookmarkGroup:(OBABookmarkGroup*)bookmarkGroup toIndex:(NSUInteger)index {
+    OBAGuard(bookmarkGroup) else {
+        return;
+    }
+
+    NSUInteger currentIndex = [_bookmarkGroups indexOfObject:bookmarkGroup];
+
+    if (currentIndex == index) {
+        // no-op.
+        return;
+    }
+
+    // check to see if the index is out of bounds for groups array.
+    // If it is out of bounds, reset the target index to be the end
+    // of the array.
+    if (index >= _bookmarkGroups.count) {
+        index = _bookmarkGroups.count - 1;
+    }
+
+    // remove the group from the array.
+    [_bookmarkGroups removeObject:bookmarkGroup];
+
+    // reinsert the group at the specified index.
+    [_bookmarkGroups insertObject:bookmarkGroup atIndex:index];
+
+    // rewrite sort orders to ensure values increase monotonically
+    [self rewriteBookmarkGroupSortOrderToIncreaseMonotonically];
+
+    [self persistGroups];
+}
+
+- (void)saveBookmarkGroup:(OBABookmarkGroup *)bookmarkGroup {
+
+    // Add the bookmark group to the list if it doesn't yet exist.
+    if (![_bookmarkGroups containsObject:bookmarkGroup]) {
+        bookmarkGroup.sortOrder = self.bookmarkGroups.count;
+        [_bookmarkGroups addObject:bookmarkGroup];
+    }
+
+    // Sort the bookmark groups by sort order.
+    [_bookmarkGroups sortUsingSelector:@selector(compare:)];
+
+    // Rewrite their sort orders to ensure that
+    // the values increase monotonically.
+    [self rewriteBookmarkGroupSortOrderToIncreaseMonotonically];
+
+    [self persistGroups];
+}
+
+- (void)removeBookmarkGroup:(OBABookmarkGroup *)bookmarkGroup {
+    for (OBABookmarkV2 *bm in bookmarkGroup.bookmarks) {
+        [_bookmarks addObject:bm];
+        bm.group = nil;
+    }
+    [_bookmarkGroups removeObject:bookmarkGroup];
+    [_preferencesDao writeBookmarks:_bookmarks];
+    [self persistGroups];
+}
+
+- (void)rewriteBookmarkGroupSortOrderToIncreaseMonotonically {
+    for (NSUInteger i=0;i<_bookmarkGroups.count;i++) {
+        _bookmarkGroups[i].sortOrder = i;
+    }
+}
+
+#pragma mark - Misc
+
+- (void)setUngroupedBookmarksOpen:(BOOL)open {
+    self.preferencesDao.ungroupedBookmarksOpen = open;
+}
+
+- (BOOL)ungroupedBookmarksOpen {
+    return self.preferencesDao.ungroupedBookmarksOpen;
 }
 
 #pragma mark - Stop Preferences
@@ -324,20 +397,26 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
 
 #pragma mark - Stop Viewing
 
-- (void) addStopAccessEvent:(OBAStopAccessEventV2*)event {
+- (void)clearMostRecentStops {
+    [_mostRecentStops removeAllObjects];
+    [_preferencesDao writeMostRecentStops:_mostRecentStops];
+    [[NSNotificationCenter defaultCenter] postNotificationName:OBAMostRecentStopsChangedNotification object:nil];
+}
+
+- (void)addStopAccessEvent:(OBAStopAccessEventV2*)event {
 
     OBAStopAccessEventV2 * existingEvent = nil;
 
     NSArray * stopIds = event.stopIds;
 
-    for( OBAStopAccessEventV2 * stopEvent in _mostRecentStops ) {
-        if( [stopEvent.stopIds isEqual:stopIds] ) {
+    for (OBAStopAccessEventV2 * stopEvent in _mostRecentStops) {
+        if ([stopEvent.stopIds isEqual:stopIds]) {
             existingEvent = stopEvent;
             break;
         }
     }
 
-    if( existingEvent ) {
+    if (existingEvent) {
         [_mostRecentStops removeObject:existingEvent];
         [_mostRecentStops insertObject:existingEvent atIndex:0];
     }
@@ -351,15 +430,19 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
     existingEvent.subtitle = event.subtitle;
 
     NSInteger over = [_mostRecentStops count] - kMaxEntriesInMostRecentList;
-    for( int i=0; i<over; i++)
+    for (int i=0; i<over; i++) {
         [_mostRecentStops removeObjectAtIndex:([_mostRecentStops count]-1)];
+    }
 
     [_preferencesDao writeMostRecentStops:_mostRecentStops];
     [[NSNotificationCenter defaultCenter] postNotificationName:OBAMostRecentStopsChangedNotification object:nil];
 }
 
-- (void)viewedArrivalsAndDeparturesForStop:(NSNotification*)note {
-    OBAStopV2* stop = [note object];
+- (void)viewedArrivalsAndDeparturesForStop:(OBAStopV2*)stop {
+    OBAGuard(stop) else {
+        return;
+    }
+
     OBAStopAccessEventV2 * event = [[OBAStopAccessEventV2 alloc] init];
     event.stopIds = @[stop.stopId];
     event.title = stop.title;
@@ -368,7 +451,7 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
 }
 
 - (BOOL)isVisitedSituationWithId:(NSString*)situationId {
-    return [_visitedSituationIds containsObject:situationId];
+    return [self.visitedSituationIds containsObject:situationId];
 }
 
 - (OBAServiceAlertsModel*)getServiceAlertsModelForSituations:(NSArray*)situations {
@@ -416,69 +499,6 @@ const NSInteger kMaxEntriesInMostRecentList = 10;
     }
 
     [_preferencesDao writeVisistedSituationIds:_visitedSituationIds];
-}
-
-#pragma mark - Custom API Server
-
-- (void)addCustomApiUrl:(NSString *)customApiUrl {
-
-    if (!customApiUrl) {
-        return;
-    }
-
-    NSString *existingCustomApiUrl = nil;
-
-    for (NSString *recentCustomApiUrl in _mostRecentCustomApiUrls) {
-        if ([recentCustomApiUrl isEqualToString:customApiUrl]) {
-            existingCustomApiUrl = customApiUrl;
-            break;
-        }
-    }
-
-    if (existingCustomApiUrl) {
-        [_mostRecentCustomApiUrls removeObject:existingCustomApiUrl];
-        [_mostRecentCustomApiUrls insertObject:existingCustomApiUrl atIndex:0];
-    }
-    else {
-        [_mostRecentCustomApiUrls insertObject:customApiUrl atIndex:0];
-    }
-
-    NSInteger over = [_mostRecentCustomApiUrls count] - kMaxEntriesInMostRecentList;
-    for (NSInteger i=0; i<over; i++) {
-        [_mostRecentCustomApiUrls removeObjectAtIndex:_mostRecentCustomApiUrls.count - 1];
-    }
-
-    [_preferencesDao writeMostRecentCustomApiUrls:_mostRecentCustomApiUrls];
-}
-
-- (NSString*)normalizedAPIServerURL {
-    NSString *apiServerName = nil;
-
-    if (self.readCustomApiUrl.length > 0) {
-        if ([self.readCustomApiUrl hasPrefix:@"http://"] || [self.readCustomApiUrl hasPrefix:@"https://"]) {
-            apiServerName = self.readCustomApiUrl;
-        }
-        else {
-            apiServerName = [NSString stringWithFormat:@"http://%@", self.readCustomApiUrl];
-        }
-    }
-    else if (self.region) {
-        apiServerName = self.region.obaBaseUrl;
-    }
-
-    if ([apiServerName hasSuffix:@"/"]) {
-        apiServerName = [apiServerName substringToIndex:apiServerName.length - 1];
-    }
-
-    return apiServerName;
-}
-
-- (NSString*)readCustomApiUrl {
-    return [_preferencesDao readCustomApiUrl];
-}
-
-- (void)writeCustomApiUrl:(NSString*)customApiUrl {
-    [_preferencesDao writeCustomApiUrl:customApiUrl];
 }
 
 @end

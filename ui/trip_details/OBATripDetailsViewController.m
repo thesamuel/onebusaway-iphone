@@ -2,7 +2,6 @@
 #import "OBATripScheduleMapViewController.h"
 #import "OBATripScheduleListViewController.h"
 #import "OBAReportProblemWithTripViewController.h"
-#import "OBALogger.h"
 #import "OBAArrivalEntryTableViewCell.h"
 #import "OBAAnalytics.h"
 #import "UITableViewCell+oba_Additions.h"
@@ -323,7 +322,7 @@ typedef NS_ENUM (NSInteger, OBASectionType) {
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
 
-    view.backgroundColor = OBAGREENBACKGROUND;
+    view.backgroundColor = [OBATheme OBAGreenBackground];
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(11, 5, 200, 30)];
     title.font = [OBATheme bodyFont];
     title.backgroundColor = [UIColor clearColor];

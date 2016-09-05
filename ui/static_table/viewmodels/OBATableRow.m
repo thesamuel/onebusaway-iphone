@@ -30,7 +30,7 @@ static NSString * const OBACellStyleSubtitleReuseIdentifier = @"OBACellStyleSubt
     
     if (self) {
         _title = [title copy];
-        _textAlignment = NSTextAlignmentLeft;
+        _selectionStyle = UITableViewCellSelectionStyleDefault;
     }
     return self;
 }
@@ -42,6 +42,8 @@ static NSString * const OBACellStyleSubtitleReuseIdentifier = @"OBACellStyleSubt
     newRow->_style = _style;
     newRow->_image = _image;
     newRow->_textAlignment = _textAlignment;
+    newRow->_titleColor = [_titleColor copyWithZone:zone];
+    newRow->_selectionStyle = _selectionStyle;
 
     return newRow;
 }

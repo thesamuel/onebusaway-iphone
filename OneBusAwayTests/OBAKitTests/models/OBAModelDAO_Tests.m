@@ -7,12 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "OBAModelDAO.h"
+#import <OBAKit/OBAKit.h>
 #import "OBATestHelpers.h"
 #import "OBATestHarnessPersistenceLayer.h"
-#import "OBABookmarkGroup.h"
-#import "OBABookmarkV2.h"
-#import "OBAArrivalAndDepartureV2.h"
 
 @interface OBAModelDAO_Tests : XCTestCase
 @property(nonatomic,strong) OBATestHarnessPersistenceLayer *persistenceLayer;
@@ -26,7 +23,7 @@
 
     self.persistenceLayer = [[OBATestHarnessPersistenceLayer alloc] init];
     self.modelDAO = [[OBAModelDAO alloc] initWithModelPersistenceLayer:self.persistenceLayer];
-    self.modelDAO.region = [OBATestHelpers pugetSoundRegion];
+    self.modelDAO.currentRegion = [OBATestHelpers pugetSoundRegion];
 }
 
 #pragma mark - hideFutureLocationWarnings
@@ -36,6 +33,26 @@
     self.modelDAO.hideFutureLocationWarnings = YES;
     XCTAssertTrue(self.persistenceLayer.hideFutureLocationWarnings);
     XCTAssertTrue(self.modelDAO.hideFutureLocationWarnings);
+}
+
+#pragma mark - Bookmark Searching w/ Predicate
+
+- (void)testANilPredicateReturnsEmptyArray {
+    NSPredicate *blah = nil;
+    NSArray *output = [self.modelDAO bookmarksMatchingPredicate:blah];
+    XCTAssertEqualObjects([NSArray array], output);
+}
+
+- (void)testBasicPredicatesWork {
+    OBABookmarkV2 *bookmark = [self generateBookmarkWithName:@"hello"];
+    NSArray *bookmarkArray = @[bookmark];
+    [self.modelDAO saveBookmark:bookmark];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", bookmark.name];
+
+    NSArray *matches = [self.modelDAO bookmarksMatchingPredicate:predicate];
+
+    XCTAssertEqualObjects(matches, bookmarkArray);
 }
 
 #pragma mark - Bookmarks
@@ -50,31 +67,31 @@
     XCTAssertNil([self.modelDAO bookmarkForArrivalAndDeparture:nilStop]);
 }
 
-// TODO: Re-enable these :-\
+- (void)testBookmarkForAAndD {
+    OBAStopV2 *stop = [self.class generateStop];
+    OBAArrivalAndDepartureV2 *arrivalAndDeparture = [self generateArrivalAndDepartureWithStop:stop];
+    OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:arrivalAndDeparture region:self.modelDAO.currentRegion];
+    [self.modelDAO saveBookmark:bookmark];
 
-//- (void)testBookmarkForAAndD {
-//    OBAStopV2 *stop = [self.class generateStop];
-//    OBAArrivalAndDepartureV2 *arrivalAndDeparture = [self generateArrivalAndDepartureWithStop:stop];
-//    OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:arrivalAndDeparture region:self.modelDAO.region];
-//    [self.modelDAO saveBookmark:bookmark];
-//
-//    OBABookmarkV2 *match = [self.modelDAO bookmarkForArrivalAndDeparture:arrivalAndDeparture];
-//    XCTAssertEqualObjects(match, bookmark);
-//}
-//
-//- (void)testBookmarkForAAndDInGroup {
-//    OBAStopV2 *stop = [self.class generateStop];
-//    OBAArrivalAndDepartureV2 *arrivalAndDeparture = [self generateArrivalAndDepartureWithStop:stop];
-//    OBABookmarkV2 *bookmark = [self generateBookmarkWithStop:stop name:nil];
-//    OBABookmarkGroup *group = ({
-//        OBABookmarkGroup *g = [[OBABookmarkGroup alloc] initWithName:@"yay my group"];
-//        [g.bookmarks addObject:bookmark];
-//        g;
-//    });
-//    [self.modelDAO saveBookmarkGroup:group];
-//
-//    XCTAssertEqualObjects([self.modelDAO bookmarkForArrivalAndDeparture:arrivalAndDeparture], bookmark);
-//}
+    OBABookmarkV2 *match = [self.modelDAO bookmarkForArrivalAndDeparture:arrivalAndDeparture];
+    XCTAssertEqualObjects(match, bookmark);
+}
+
+- (void)testBookmarkForAAndDInGroup {
+    OBAStopV2 *stop = [self.class generateStop];
+    OBAArrivalAndDepartureV2 *arrivalAndDeparture = [self generateArrivalAndDepartureWithStop:stop];
+    OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:arrivalAndDeparture region:self.modelDAO.currentRegion];
+    OBABookmarkGroup *group = ({
+        OBABookmarkGroup *g = [[OBABookmarkGroup alloc] initWithName:@"yay my group"];
+        [g.bookmarks addObject:bookmark];
+        g;
+    });
+    [self.modelDAO saveBookmarkGroup:group];
+
+    OBABookmarkV2 *match = [self.modelDAO bookmarkForArrivalAndDeparture:arrivalAndDeparture];
+
+    XCTAssertEqualObjects(match, bookmark);
+}
 
 - (void)testAllBookmarksAggregatesLooseAndGroupedBookmarks {
     OBABookmarkV2 *looseBookmark = [self generateBookmarkWithName:nil];
@@ -303,6 +320,58 @@
     XCTAssertEqual(1, group.bookmarks.count);
 }
 
+#pragma mark - Reordering Bookmark Groups
+
+- (void)testBookmarkGroupsAreAppendedToEndAtSave {
+    OBABookmarkGroup *group0 = [self generateBookmarkGroupNamed:@"Zeroth" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group0];
+
+    OBABookmarkGroup *group1 = [self generateBookmarkGroupNamed:@"First" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group1];
+
+    XCTAssertEqual(group0.sortOrder, 0);
+    XCTAssertEqual(group1.sortOrder, 1);
+}
+
+- (void)testMovingBookmarkGroupToItsCurrentIndex {
+    OBABookmarkGroup *group0 = [self generateBookmarkGroupNamed:@"Zeroth" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group0];
+
+    OBABookmarkGroup *group1 = [self generateBookmarkGroupNamed:@"First" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group1];
+
+    [self.modelDAO moveBookmarkGroup:group0 toIndex:0];
+
+    XCTAssertEqual(group0.sortOrder, 0);
+    XCTAssertEqual(group1.sortOrder, 1);
+}
+
+- (void)testMovingBookmarkGroupToExistingPosition {
+    OBABookmarkGroup *group0 = [self generateBookmarkGroupNamed:@"Zeroth" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group0];
+
+    OBABookmarkGroup *group1 = [self generateBookmarkGroupNamed:@"First" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group1];
+
+    [self.modelDAO moveBookmarkGroup:group1 toIndex:0];
+
+    XCTAssertEqual(group0.sortOrder, 1);
+    XCTAssertEqual(group1.sortOrder, 0);
+}
+
+- (void)testMovingBookmarkGroupToBadIndex {
+    OBABookmarkGroup *group0 = [self generateBookmarkGroupNamed:@"Zeroth" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group0];
+
+    OBABookmarkGroup *group1 = [self generateBookmarkGroupNamed:@"First" bookmarkCount:1];
+    [self.modelDAO saveBookmarkGroup:group1];
+
+    [self.modelDAO moveBookmarkGroup:group0 toIndex:999];
+
+    XCTAssertEqual(group0.sortOrder, 1);
+    XCTAssertEqual(group1.sortOrder, 0);
+}
+
 #pragma mark - Deleting Bookmarks
 
 - (void)testRemovingOneOfManyLooseBookmarks {
@@ -397,9 +466,12 @@
     OBABookmarkGroup *group = [self generateBookmarkGroupNamed:@"Group 1" bookmarkCount:1];
     [self.modelDAO saveBookmarkGroup:group];
 
+    XCTAssertEqual(self.modelDAO.ungroupedBookmarks.count, (NSInteger)0);
     XCTAssertEqual(self.modelDAO.bookmarkGroups.count, (NSInteger)1);
 
     [self.modelDAO removeBookmarkGroup:group];
+
+    XCTAssertEqual(self.modelDAO.ungroupedBookmarks.count, (NSInteger)1);
     XCTAssertEqual(self.modelDAO.bookmarkGroups.count, (NSInteger)0);
 }
 
@@ -475,25 +547,54 @@
 #pragma mark - Region
 
 - (void)testSettingAlreadySetRegion {
-    OBARegionV2 *region = self.modelDAO.region;
-    self.modelDAO.region = region;
-    XCTAssertEqualObjects(self.modelDAO.region, region);
+    OBARegionV2 *region = self.modelDAO.currentRegion;
+    self.modelDAO.currentRegion = region;
+    XCTAssertEqualObjects(self.modelDAO.currentRegion, region);
 }
 
 - (void)testDefaultValueForAutomaticallySetRegion {
     XCTAssertTrue([self.persistenceLayer readSetRegionAutomatically]);
-    XCTAssertTrue(self.modelDAO.readSetRegionAutomatically);
+    XCTAssertTrue(self.modelDAO.automaticallySelectRegion);
 }
 
 - (void)testSettingAutomaticallySetRegion {
-    [self.modelDAO writeSetRegionAutomatically:NO];
-    XCTAssertFalse(self.modelDAO.readSetRegionAutomatically);
+    self.modelDAO.automaticallySelectRegion = NO;
+    XCTAssertFalse(self.modelDAO.automaticallySelectRegion);
     XCTAssertFalse(self.persistenceLayer.readSetRegionAutomatically);
 }
 
 - (void)testNullRegionReturnsEmptyArray {
-    self.modelDAO.region = nil;
+    self.modelDAO.currentRegion = nil;
     XCTAssertEqualObjects(self.modelDAO.bookmarksForCurrentRegion, @[]);
+}
+
+#pragma mark - Most Recent Stops
+
+- (void)testViewingStopAffectsMostRecentStops {
+    OBAStopV2 *stop = [self.class generateStop];
+    [self.modelDAO viewedArrivalsAndDeparturesForStop:stop];
+
+    XCTAssertEqual(1, self.modelDAO.mostRecentStops.count);
+
+}
+
+- (void)testClearingMostRecentStops {
+    OBAStopV2 *stop = [self.class generateStop];
+    [self.modelDAO viewedArrivalsAndDeparturesForStop:stop];
+    [self.modelDAO clearMostRecentStops];
+
+    XCTAssertEqual(0, self.modelDAO.mostRecentStops.count);
+}
+
+- (void)testClearingMostRecentStopsTriggersNotification {
+    OBAStopV2 *stop = [self.class generateStop];
+    [self.modelDAO viewedArrivalsAndDeparturesForStop:stop];
+
+    [self expectationForNotification:OBAMostRecentStopsChangedNotification object:nil handler:nil];
+
+    [self.modelDAO clearMostRecentStops];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 #pragma mark - Location
@@ -501,8 +602,10 @@
 - (void)testMostRecentLocation {
     CLLocation *location = [[CLLocation alloc] initWithLatitude:47.623971 longitude:-122.3132352];
     self.modelDAO.mostRecentLocation = location;
-    XCTAssertEqualObjects(self.modelDAO.mostRecentLocation, location);
-    XCTAssertEqualObjects(self.persistenceLayer.readMostRecentLocation, location);
+    XCTAssertEqual(self.modelDAO.mostRecentLocation.coordinate.latitude, location.coordinate.latitude);
+    XCTAssertEqual(self.modelDAO.mostRecentLocation.coordinate.longitude, location.coordinate.longitude);
+    XCTAssertEqual(self.persistenceLayer.readMostRecentLocation.coordinate.latitude, location.coordinate.latitude);
+    XCTAssertEqual(self.persistenceLayer.readMostRecentLocation.coordinate.longitude, location.coordinate.longitude);
 }
 
 #pragma mark - Helpers
@@ -539,7 +642,7 @@
 
 - (OBABookmarkV2*)generateBookmarkWithStop:(OBAStopV2*)stop name:(nullable NSString*)name {
     OBAArrivalAndDepartureV2 *arrivalAndDeparture = [self generateArrivalAndDepartureWithStop:stop];
-    OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:arrivalAndDeparture region:self.modelDAO.region];
+    OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:arrivalAndDeparture region:self.modelDAO.currentRegion];
     bookmark.name = name;
     return bookmark;
 }
@@ -555,6 +658,8 @@
     OBAArrivalAndDepartureV2 *arrivalAndDeparture = [[OBAArrivalAndDepartureV2 alloc] init];
     [arrivalAndDeparture.references addStop:stop ?: [self.class generateStop]];
     arrivalAndDeparture.stopId = stop.stopId;
+    arrivalAndDeparture.routeId = [NSUUID UUID].UUIDString;
+    arrivalAndDeparture.tripHeadsign = [NSUUID UUID].UUIDString;
 
     return arrivalAndDeparture;
 }

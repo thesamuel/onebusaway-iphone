@@ -75,6 +75,26 @@
 + (UIColor*)colorWithRed:(NSUInteger)red green:(NSUInteger)green blue:(NSUInteger)blue alpha:(CGFloat)alpha;
 
 /**
+ Formerly known as OBAGREEN.
+ */
++ (UIColor*)OBAGreen;
+
+/**
+ Formerly known as OBAGREENWITHALPHA.
+ */
++ (UIColor*)OBAGreenWithAlpha:(CGFloat)alpha;
+
+/**
+ Formerly known as OBAGREENBACKGROUND. Very, very pale green. Semi-transparent.
+ */
++ (UIColor*)OBAGreenBackground;
+
+/**
+ Formerly known as OBADARKGREEN.
+ */
++ (UIColor*)OBADarkGreen;
+
+/**
  Use this for UI elements that are not enabled or non-interactable.
  */
 + (UIColor*)darkDisabledColor;
@@ -121,12 +141,17 @@
  */
 + (UIColor*)delayedDepartureColor;
 
+/**
+ Table view section header background color.
+ */
++ (UIColor*)tableViewSectionHeaderBackgroundColor;
+
 // Pixels (err, points)
 
 /**
  Half of the default padding. Used in situations where a tighter fit is necessary.
  */
-+ (CGFloat)halfDefaultPadding;
++ (CGFloat)compactPadding;
 
 /**
  * The default vertical and horizontal padding in px.
@@ -134,7 +159,17 @@
 + (CGFloat)defaultPadding;
 
 /**
+ The default corner radius to apply to views that require rounded edges.
+ */
++ (CGFloat)defaultCornerRadius;
+
+/**
  The value of +[OBATheme defaultPadding] in the form of UIEdgeInsets.
  */
 + (UIEdgeInsets)defaultEdgeInsets;
+
+/**
+ The value of +[OBATheme compactPadding] in the form of UIEdgeInsets.
+ */
++ (UIEdgeInsets)compactEdgeInsets;
 @end

@@ -24,19 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class OBAModelDAO;
 
-@interface OBASearchResultsMapViewController : UIViewController <OBANavigationTargetAware, OBASearchControllerDelegate, MKMapViewDelegate,OBALocationManagerDelegate,OBAProgressIndicatorDelegate, UISearchBarDelegate>
-@property(nonatomic,strong) OBAApplicationDelegate * appDelegate;
-@property(nonatomic,strong) IBOutlet OBAScopeView *scopeView;
-@property(nonatomic,strong) IBOutlet UISegmentedControl *searchTypeSegmentedControl;
-@property(nonatomic,strong) IBOutlet MKMapView * mapView;
-@property(nonatomic,strong) IBOutlet UISearchBar *searchBar;
-@property(nonatomic,strong) IBOutlet UIToolbar *toolbar;
-@property(nonatomic,strong) IBOutlet UILabel *mapLabel;
-
-
-- (IBAction)onCrossHairsButton:(id)sender;
+@interface OBASearchResultsMapViewController : UIViewController <OBANavigationTargetAware, OBASearchControllerDelegate, OBALocationManagerDelegate, OBAProgressIndicatorDelegate>
+- (IBAction)updateLocation:(id)sender;
 - (IBAction)showListView:(id)sender;
-
+- (void)recenterMap;
 @end
 
 NS_ASSUME_NONNULL_END

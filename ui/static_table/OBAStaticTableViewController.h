@@ -12,7 +12,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, OBARootViewStyle) {
+    OBARootViewStyleNormal = 0,
+    OBARootViewStyleBlur,
+};
+
 @interface OBAStaticTableViewController : UIViewController
+@property(nonatomic,assign) OBARootViewStyle rootViewStyle;
 @property(nonatomic,strong,readonly) UITableView *tableView;
 @property(nonatomic,strong) NSArray<OBATableSection*> *sections;
 
@@ -29,8 +35,28 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy,nullable) NSString *emptyDataSetDescription;
 
 - (OBABaseRow*)rowAtIndexPath:(NSIndexPath*)indexPath;
-
 - (nullable NSIndexPath*)indexPathForRow:(OBABaseRow*)row;
+
+/**
+ n.b. This requires you to set a `deleteModel` block on your row.
+
+ Removes the row at indexPath from section[section].rows[row],
+ performs table view row deletion animations, and calls the 
+ deleteModel block of the row.
+ */
+- (void)deleteRowAtIndexPath:(NSIndexPath*)indexPath;
+
+/**
+ returns the index path for the row that contains a link
+ to the specified model.
+
+ @param model The model for which you want to find an index path.
+
+ @return The located index path
+ */
+- (nullable NSIndexPath*)indexPathForModel:(id)model;
+
+- (void)replaceRowAtIndexPath:(NSIndexPath*)indexPath withRow:(OBABaseRow*)row;
 @end
 
 NS_ASSUME_NONNULL_END

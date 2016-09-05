@@ -7,10 +7,12 @@
 //
 
 #import "OBABookmarkRouteDisambiguationViewController.h"
-#import <OBAKit/OBAArrivalsAndDeparturesForStopV2.h>
+#import <OBAKit/OBAKit.h>
 #import "OBATableRow.h"
 #import "OBAEditStopBookmarkViewController.h"
-#import "OBAApplication.h"
+#import "OBARouteFilter.h"
+#import "OBAModelDAO.h"
+#import "OBASegmentedRow.h"
 
 @interface OBABookmarkRouteDisambiguationViewController ()
 @property(nonatomic,strong) OBAArrivalsAndDeparturesForStopV2 *arrivalsAndDepartures;
@@ -31,33 +33,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:OBAStrings.cancel style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
 
-    OBATableSection *section = [[OBATableSection alloc] init];
-
-    NSMutableSet *representedItems = [NSMutableSet set];
-
-    for (OBAArrivalAndDepartureV2 *dep in self.arrivalsAndDepartures.arrivalsAndDepartures) {
-
-        // make sure we don't double up bookmarks :-|
-        if ([representedItems containsObject:dep.bookmarkKey]) {
-            continue;
-        }
-        else {
-            [representedItems addObject:dep.bookmarkKey];
-        }
-
-        [section addRow:^OBABaseRow *{
-            OBATableRow *row = [[OBATableRow alloc] initWithTitle:[NSString stringWithFormat:@"%@ - %@", dep.bestAvailableName, dep.tripHeadsign] action:^{
-                OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:dep region:self.region];
-                OBAEditStopBookmarkViewController *bookmarkViewController = [[OBAEditStopBookmarkViewController alloc] initWithBookmark:bookmark];
-                [self.navigationController pushViewController:bookmarkViewController animated:YES];
-            }];
-            row.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            return row;
-        }];
-    }
-    self.sections = @[section];
+    [self loadData];
 }
 
 #pragma mark - Actions
@@ -68,11 +46,82 @@
 
 #pragma mark - Accessors
 
+- (OBAModelDAO*)modelDAO {
+    if (!_modelDAO) {
+        _modelDAO = [OBAApplication sharedApplication].modelDao;
+    }
+    return _modelDAO;
+}
+
 - (OBARegionV2*)region {
     if (!_region) {
-        _region = [OBAApplication sharedApplication].modelDao.region;
+        _region = self.modelDAO.currentRegion;
     }
     return _region;
+}
+
+- (OBARouteFilter*)routeFilter {
+    if (!_routeFilter) {
+        OBAStopPreferencesV2 *stopPreferences = [self.modelDAO stopPreferencesForStopWithId:self.arrivalsAndDepartures.stopId];
+        _routeFilter = [[OBARouteFilter alloc] initWithStopPreferences:stopPreferences];
+    }
+    return _routeFilter;
+}
+
+#pragma mark - Data Loading
+
+- (void)loadData {
+    OBATableSection *stopSection = [[OBATableSection alloc] initWithTitle:NSLocalizedString(@"Bookmark the Stop", @"")];
+    [stopSection addRowWithBlock:^OBABaseRow *{
+        OBATableRow *row = [[OBATableRow alloc] initWithTitle:self.arrivalsAndDepartures.stop.nameWithDirection action:^{
+            OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithStop:self.arrivalsAndDepartures.stop region:self.region];
+            OBAEditStopBookmarkViewController *bookmarkViewController = [[OBAEditStopBookmarkViewController alloc] initWithBookmark:bookmark];
+            [self.navigationController pushViewController:bookmarkViewController animated:YES];
+        }];
+        row.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        return row;
+    }];
+
+    OBATableSection *routeSection = [[OBATableSection alloc] initWithTitle:NSLocalizedString(@"Bookmark a Route at Stop", @"")];
+
+    if (self.routeFilter.hasFilteredRoutes) {
+        [routeSection addRowWithBlock:^OBABaseRow *{
+            OBASegmentedRow *segmentedRow = [[OBASegmentedRow alloc] initWithSelectionChange:^(NSUInteger selectedIndex) {
+                self.routeFilter.showFilteredRoutes = !self.routeFilter.showFilteredRoutes;
+                [self loadData];
+            }];
+            segmentedRow.items = @[NSLocalizedString(@"All Departures", @""), NSLocalizedString(@"Filtered Departures", @"")];
+            segmentedRow.selectedItemIndex = self.routeFilter.showFilteredRoutes ? 0 : 1;
+            return segmentedRow;
+        }];
+    }
+
+    NSMutableSet *set = [NSMutableSet set];
+
+    for (OBAArrivalAndDepartureV2 *dep in [self.arrivalsAndDepartures.arrivalsAndDepartures sortedArrayUsingSelector:@selector(compareRouteName:)]) {
+
+        if (![self.routeFilter shouldShowRouteID:dep.routeId]) {
+            continue;
+        }
+
+        // dedupe the list.
+        if ([set containsObject:dep]) {
+            continue;
+        }
+        [set addObject:dep];
+
+        [routeSection addRowWithBlock:^OBABaseRow *{
+            OBATableRow *row = [[OBATableRow alloc] initWithTitle:[NSString stringWithFormat:@"%@ - %@", dep.bestAvailableName, dep.tripHeadsign] action:^{
+                OBABookmarkV2 *bookmark = [[OBABookmarkV2 alloc] initWithArrivalAndDeparture:dep region:self.region];
+                OBAEditStopBookmarkViewController *bookmarkViewController = [[OBAEditStopBookmarkViewController alloc] initWithBookmark:bookmark];
+                [self.navigationController pushViewController:bookmarkViewController animated:YES];
+            }];
+            row.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            return row;
+        }];
+    }
+    self.sections = @[stopSection, routeSection];
+    [self.tableView reloadData];
 }
 
 @end

@@ -1,5 +1,4 @@
 #import "OBAAgenciesListViewController.h"
-#import "OBALogger.h"
 #import "OBAAgencyWithCoverageV2.h"
 #import "OBASearch.h"
 #import "OBAAnalytics.h"
@@ -180,7 +179,7 @@ typedef NS_ENUM (NSInteger, OBASectionType) {
 {
      if (section == 0) {
         UIView *footer = [[UIView alloc] init];
-        footer.backgroundColor = OBAGREENBACKGROUND;
+        footer.backgroundColor = [OBATheme OBAGreenBackground];
         return footer;
     }
     else {

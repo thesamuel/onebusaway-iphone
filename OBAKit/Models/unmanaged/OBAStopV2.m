@@ -17,8 +17,21 @@
         _name = [aDecoder decodeObjectForKey:@"name"];
         _code = [aDecoder decodeObjectForKey:@"code"];
         _direction = [aDecoder decodeObjectForKey:@"direction"];
-        _latitude = [aDecoder decodeObjectForKey:@"latitude"];
-        _longitude = [aDecoder decodeObjectForKey:@"longitude"];
+
+        if ([aDecoder containsValueForKey:@"lat"]) {
+            _lat = [aDecoder decodeDoubleForKey:@"lat"];
+        }
+        else {
+            _lat = [[aDecoder decodeObjectForKey:@"latitude"] doubleValue];
+        }
+
+        if ([aDecoder containsValueForKey:@"lon"]) {
+            _lon = [aDecoder decodeDoubleForKey:@"lon"];
+        }
+        else {
+            _lon = [[aDecoder decodeObjectForKey:@"longitude"] doubleValue];
+        }
+
         _routeIds = [aDecoder decodeObjectForKey:@"routeIds"];
         _routes = [aDecoder decodeObjectForKey:@"routes"];
     }
@@ -30,8 +43,8 @@
     [aCoder encodeObject:_name forKey:@"name"];
     [aCoder encodeObject:_code forKey:@"code"];
     [aCoder encodeObject:_direction forKey:@"direction"];
-    [aCoder encodeObject:_latitude forKey:@"latitude"];
-    [aCoder encodeObject:_longitude forKey:@"longitude"];
+    [aCoder encodeDouble:_lat forKey:@"lat"];
+    [aCoder encodeDouble:_lon forKey:@"lon"];
     [aCoder encodeObject:_routeIds forKey:@"routeIds"];
     [aCoder encodeObject:_routes forKey:@"routes"];
 }
@@ -44,8 +57,8 @@
     stop->_name = [_name copyWithZone:zone];
     stop->_code = [_code copyWithZone:zone];
     stop->_direction = [_direction copyWithZone:zone];
-    stop->_latitude = [_latitude copyWithZone:zone];
-    stop->_longitude = [_longitude copyWithZone:zone];
+    stop->_lat = _lat;
+    stop->_lon = _lon;
     stop->_routeIds = [_routeIds copyWithZone:zone];
     stop->_routes = [_routes copyWithZone:zone];
 
@@ -56,28 +69,22 @@
 
 - (NSArray<OBARouteV2*>*)routes {
 
-    if (!_routes) {
-        NSMutableArray *routes = [NSMutableArray array];
+    @synchronized (self) {
+        if (!_routes) {
+            NSMutableArray *routes = [NSMutableArray array];
 
-        for (NSString *routeId in _routeIds) {
-            OBARouteV2 *route = [self.references getRouteForId:routeId];
-            [routes addObject:route];
+            for (NSString *routeId in _routeIds) {
+                OBARouteV2 *route = [self.references getRouteForId:routeId];
+                [routes addObject:route];
+            }
+
+            [routes sortUsingSelector:@selector(compareUsingName:)];
+
+            _routes = [[NSArray alloc] initWithArray:routes copyItems:YES];
         }
-
-        [routes sortUsingSelector:@selector(compareUsingName:)];
-
-        _routes = [[NSArray alloc] initWithArray:routes copyItems:YES];
     }
 
     return _routes;
-}
-
-- (double) lat {
-    return [self.latitude doubleValue];
-}
-
-- (double) lon {
-    return [self.longitude doubleValue];
 }
 
 - (NSComparisonResult) compareUsingName:(OBAStopV2*)aStop {
@@ -106,6 +113,14 @@
     return OBARouteTypeUnknown;
 }
 
+- (NSString*)nameWithDirection {
+    if (self.direction) {
+        return [NSString stringWithFormat:@"%@ [%@]", self.name, self.direction];
+    }
+    else {
+        return [self.name copy];
+    }
+}
 
 #pragma mark - MKAnnotation
 
@@ -149,7 +164,7 @@
 }
 
 - (NSString*) description {
-    return [NSString stringWithFormat:@"<%@ %p> {id: %@, name: %@, code: %@, direction: %@, lat/lng: (%@, %@), routeIDs: %@}", NSStringFromClass(self.class), self, self.stopId, self.name, self.code, self.direction, self.latitude, self.longitude, self.routeIds];
+    return [NSString stringWithFormat:@"<%@ %p> {id: %@, name: %@, code: %@, direction: %@, lat/lng: (%@, %@), routeIDs: %@}", NSStringFromClass(self.class), self, self.stopId, self.name, self.code, self.direction, @(self.lat), @(self.lon), self.routeIds];
 }
 
 @end

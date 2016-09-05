@@ -10,10 +10,12 @@
 #import "OBAAgenciesListViewController.h"
 #import "OBACreditsViewController.h"
 #import "OBAAnalytics.h"
-#import "OBARegionListViewController.h"
 #import <SafariServices/SafariServices.h>
 #import <Apptentive/Apptentive.h>
 #import <OBAKit/OBAEmailHelper.h>
+#import "UILabel+OBAAdditions.h"
+#import "OneBusAway-Swift.h"
+#import <OBAKit/OBAKit.h>
 
 static NSString * const kDonateURLString = @"http://onebusaway.org/donate/";
 static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
@@ -77,17 +79,11 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
 - (OBATableSection*)settingsTableSection {
 
     OBATableRow *region = [OBATableRow tableRowWithTitle:NSLocalizedString(@"Region", @"") action:^{
-        [self.navigationController pushViewController:[[OBARegionListViewController alloc] init] animated:YES];
+        [self.navigationController pushViewController:[[RegionListViewController alloc] init] animated:YES];
     }];
     region.style = UITableViewCellStyleValue1;
     region.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-    if ([OBAApplication sharedApplication].modelDao.readCustomApiUrl.length == 0) {
-        region.subtitle = [OBAApplication sharedApplication].modelDao.region.regionName;
-    }
-    else {
-        region.subtitle = [OBAApplication sharedApplication].modelDao.readCustomApiUrl;
-    }
+    region.subtitle = [OBAApplication sharedApplication].modelDao.currentRegion.regionName;
 
     OBATableRow *agencies = [OBATableRow tableRowWithTitle:NSLocalizedString(@"Agencies", @"Info Page Agencies Row Title") action:^{
         [self openAgencies];
@@ -115,7 +111,14 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
         reportAppIssue.style = UITableViewCellStyleValue1;
     }
 
-    return [OBATableSection tableSectionWithTitle:NSLocalizedString(@"Contact Us", @"") rows:@[contactUs, reportAppIssue]];
+    OBATableRow *makeItBetter = [OBATableRow tableRowWithTitle:NSLocalizedString(@"Help Make OneBusAway Better", @"") action:^{
+        NSURL *URL = [NSURL URLWithString:@"https://www.github.com/onebusaway/onebusaway-iphone"];
+        [[UIApplication sharedApplication] openURL:URL];
+    }];
+
+    OBATableSection *section = [OBATableSection tableSectionWithTitle:NSLocalizedString(@"Contact Us", @"") rows:@[contactUs, reportAppIssue, makeItBetter]];
+
+    return section;
 }
 
 - (OBATableSection*)aboutTableSection {
@@ -157,7 +160,7 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
                                                                    message:nil
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", @"Dismiss button for alert.") style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:OBAStrings.dismiss style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -192,7 +195,7 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
 
 - (UIView*)buildTableHeaderView {
     UIView *header = [[UIView alloc] initWithFrame:self.view.bounds];
-    header.backgroundColor = OBAGREEN;
+    header.backgroundColor = [OBATheme OBAGreen];
 
     CGRect frame = header.frame;
     frame.size.height = 160.f;
@@ -211,7 +214,7 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
     headerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     headerLabel.text = NSLocalizedString(@"OneBusAway", @"");
     headerLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-    [self.class resizeLabelHeightToFitText:headerLabel];
+    [headerLabel oba_resizeHeightToFit];
     [header addSubview:headerLabel];
 
     UILabel *copyrightLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(headerLabel.frame), CGRectGetWidth(header.frame), 30.f)];
@@ -220,27 +223,13 @@ static NSString * const kPrivacyURLString = @"http://onebusaway.org/privacy/";
     copyrightLabel.text = [NSString stringWithFormat:@"%@\r\n%@", [OBAApplication sharedApplication].fullAppVersionString, @"© University of Washington"];
     copyrightLabel.numberOfLines = 2;
     copyrightLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
-    [self.class resizeLabelHeightToFitText:copyrightLabel];
+    [copyrightLabel oba_resizeHeightToFit];
     [header addSubview:copyrightLabel];
 
     frame.size.height = CGRectGetMaxY(copyrightLabel.frame) + verticalPadding;
     header.frame = frame;
 
     return header;
-}
-
-// TODO: move me into a category or something.
-+ (CGRect)resizeLabelHeightToFitText:(UILabel*)label {
-    CGRect calculatedRect = [label.text boundingRectWithSize:CGSizeMake(CGRectGetWidth(label.frame), CGFLOAT_MAX)
-                                                     options:NSStringDrawingUsesLineFragmentOrigin
-                                                  attributes:@{NSFontAttributeName: label.font}
-                                                     context:nil];
-
-    CGRect labelFrame = label.frame;
-    labelFrame.size.height = CGRectGetHeight(calculatedRect);
-    label.frame = labelFrame;
-
-    return label.frame;
 }
 
 @end
