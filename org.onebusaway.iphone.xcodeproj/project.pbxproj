@@ -965,6 +965,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AF44DDD55C20E3AC9453C250 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -2067,6 +2074,7 @@
 			buildPhases = (
 				61D1F9011D485ADD0029D18F /* Resources */,
 				61D1F9251D485ADE0029D18F /* Embed App Extensions */,
+				AF44DDD55C20E3AC9453C250 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2149,7 +2157,6 @@
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = 567KX7DD6P;
-						DevelopmentTeam = THEWY9596Q;
 						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
@@ -2169,11 +2176,11 @@
 					};
 					61D1F90E1D485ADE0029D18F = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 567KX7DD6P;
 					};
 					936F44FC1C780E7600C61656 = {
 						CreatedOnToolsVersion = 7.2.1;
 						DevelopmentTeam = 567KX7DD6P;
-						DevelopmentTeam = THEWY9596Q;
 					};
 					936F45D81C78D06600C61656 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -2823,6 +2830,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2868,6 +2876,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2909,6 +2918,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2950,6 +2960,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
